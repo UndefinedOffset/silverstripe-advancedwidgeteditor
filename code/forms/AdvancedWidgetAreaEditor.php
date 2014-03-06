@@ -133,6 +133,13 @@ class AdvancedWidgetAreaEditor extends WidgetAreaEditor {
         }
     }
     
+    /**
+     * Generates a fake request for the field
+     * @param {SS_HTTPRequest} $request Source Request to base the fake request off of
+     * @param {Widget} $sourceWidget Source widget
+     * @param {string} $baseLink Base URL to be truncated off of the form
+     * @return {SS_HTTPRequest} Fake HTTP Request used to fool the form field into thinking the request was made to it directly
+     */
     protected function getFakeRequest(SS_HTTPRequest $request, Widget $sourceWidget, $baseLink) {
         $postVars=$request->postVars();
         $fieldName=rawurldecode($request->param('FieldName'));
