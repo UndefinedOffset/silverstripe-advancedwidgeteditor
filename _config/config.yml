@@ -1,0 +1,7 @@
+---
+Name: advancedwidgeteditor
+After: 'cms/*', 'framework/*', 'widgets/*'
+---
+Widget:
+    extensions:
+        - 'AdvancedWidgetEditorInterface'
