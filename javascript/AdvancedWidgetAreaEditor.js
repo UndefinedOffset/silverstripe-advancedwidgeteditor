@@ -18,9 +18,14 @@
                 
                 var parentRef=$(this);
                 var locale=$(this).closest('form').find('input[name=Locale]').val();
+                var url=$(this).attr('data-addlink');
+                url=url.replace(/\?(.*)$/, '');
+                var params=$(this).attr('data-addlink');
+                params=params.replace(/^(.*)\?/, '?');
+                console.log(params);
                 
                 $.ajax({
-                    'url':$(this).attr('data-addlink')+className, 
+                    'url':url+'/'+className+params,
                     'success':function(response) {parentRef.insertWidgetEditor(response);},
                     'data':{
                         'locale':locale

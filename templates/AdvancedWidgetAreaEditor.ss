@@ -1,4 +1,4 @@
-<div class="WidgetAreaEditor AdvancedWidgetAreaEditor field" id="WidgetAreaEditor-$Name" name="$Name"<% if MaxWidgets %> maxwidgets="$MaxWidgets"<% end_if %> data-addlink="$Link('add-widget')/">
+<div class="WidgetAreaEditor AdvancedWidgetAreaEditor field" id="WidgetAreaEditor-$Name" name="$Name"<% if MaxWidgets %> maxwidgets="$MaxWidgets"<% end_if %> data-addlink="$Link('add-widget')">
     <input type="hidden" id="$Name" name="$IdxField" value="$Value" />
     <div class="availableWidgetsHolder">
         <h2><% _t('WidgetAreaEditor_ss.AVAILABLE', 'Available Widgets') %></h2>
