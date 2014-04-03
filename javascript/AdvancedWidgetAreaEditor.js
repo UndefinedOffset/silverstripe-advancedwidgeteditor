@@ -22,7 +22,6 @@
                 url=url.replace(/\?(.*)$/, '');
                 var params=$(this).attr('data-addlink');
                 params=params.replace(/^(.*)\?/, '?');
-                console.log(params);
                 
                 $.ajax({
                     'url':url+'/'+className+params,
