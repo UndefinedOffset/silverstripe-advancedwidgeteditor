@@ -21,7 +21,11 @@
                 var url=$(this).attr('data-addlink');
                 url=url.replace(/\?(.*)$/, '');
                 var params=$(this).attr('data-addlink');
-                params=params.replace(/^(.*)\?/, '?');
+                if(params.indexOf('?')!=-1) {
+                    params=params.replace(/^(.*)\?/, '?');
+                }else {
+                    params='';
+                }
                 
                 $.ajax({
                     'url':url+'/'+className+params,
