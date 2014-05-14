@@ -24,6 +24,48 @@ class AdvancedWidgetAreaEditor extends WidgetAreaEditor {
     }
     
     /**
+	 * 
+	 * @return ArrayList
+	 */
+    public function AvailableWidgets() {
+        $widgets=new ArrayList();
+
+        foreach($this->widgetClasses as $widgetClass) {
+            $classes=ClassInfo::subclassesFor($widgetClass);
+            
+            if(isset($classes['Widget'])) { 
+                unset($classes['Widget']); 
+            }else if(isset($classes[0]) && $classes[0]=='Widget') { 
+                unset($classes[0]); 
+            }
+            
+            
+            $record=$this->form->getRecord();
+            $availableWidgets=null;
+            if($record) {
+                $availableWidgets=$record->config()->available_widgets;
+            }
+            
+            foreach($classes as $class) {
+                if(!empty($availableWidgets) && is_array($availableWidgets) && !in_array($class, $availableWidgets)) {
+                    continue;
+                }
+                
+                $available=Config::inst()->get($class, 'only_available_in');
+                if(!empty($available) && is_array($available)) {
+                    if(in_array($this->Name, $available)) {
+                        $widgets->push(singleton($class));
+                    }
+                }else {
+                    $widgets->push(singleton($class));
+                }
+            }
+        }
+        
+        return $widgets;
+    }
+    
+    /**
      * @return HasManyList
      */
     public function UsedWidgets() {
