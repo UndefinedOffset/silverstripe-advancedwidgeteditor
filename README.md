@@ -25,5 +25,23 @@ Page:
     - 'AdvancedWidgetPageExtension'
 ```
 
+## Controlling Available Widgets per-class
+To control widgets on a per-class host class (class which the Advanced Widget Editor is controlling the widget area for), you can use the config property available_widgets for example:
+```yml
+Page:
+    available_widgets:
+        - "RSSWidget"
+        - "MyExampleWidget"
+
+BlogTree:
+    available_widgets:
+        - "ArchiveWidget"
+        - "BlogManagementWidget"
+        - "TagCloudWidget"
+        - "SubscribeRSSWidget"
+```
+
+In the case of the above example the Page class and it's decendent classes will have the RSSWidget and MyExampleWidget available. Where the BlogTree class and it's decendent classes will also have ArchiveWidget, BlogManagementWidget, etc along side the RSSWidget and MyExampleWidget.  
+
 ## Reporting an issue
 When you're reporting an issue please ensure you specify what version of SilverStripe you are using i.e. 3.1.3, 3.2beta, master etc. Also be sure to include any JavaScript or PHP errors you receive, for PHP errors please ensure you include the full stack trace. Also please include how you produced the issue. You may also be asked to provide some of the classes to aid in re-producing the issue. Stick with the issue, remember that you seen the issue not the maintainer of the module so it may take allot of questions to arrive at a fix or answer.
