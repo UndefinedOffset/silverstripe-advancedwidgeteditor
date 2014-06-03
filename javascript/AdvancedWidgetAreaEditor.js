@@ -42,6 +42,9 @@
                 if($(this).find('.ss-uploadfield').length>0) {
                     $(this).closest('form').attr('enctype', 'multipart/form-data');
                 }
+            },
+            rewriteWidgetAreaAttributes: function() {
+                //Do nothing the widgets should be written correctly coming from the cms
             }
         });
         

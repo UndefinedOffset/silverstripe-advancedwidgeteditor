@@ -97,12 +97,12 @@ class AdvancedWidgetAreaEditor extends WidgetAreaEditor {
     public function handleField($request) {
         $className=$request->param('Type');
         $fieldName=rawurldecode($request->param('FieldName'));
-        $realFieldName=preg_replace('/^Widget\[(.*?)\]\[(.*?)\]$/', '$2', $fieldName);
+        $realFieldName=preg_replace('/^Widget\[(.*?)\]\[(.*?)\]\[(.*?)\]$/', '$3', $fieldName);
         $baseURL=Controller::join_links($this->Link('field'), $className, 'field', $request->param('FieldName')).'/';
         
         
         //Parse field name for the id
-        $objId=preg_replace('/Widget\[(.*?)\]\[(.*?)\]$/', '$1', $fieldName);
+        $objId=preg_replace('/Widget\[(.*?)\]\[(.*?)\]\[(.*?)\]/', '$2', $fieldName);
         if(class_exists($className) && is_subclass_of($className, 'Widget')) {
             if(is_numeric($objId)) {
                 $obj=$this->UsedWidgets()->byID(intval($objId));
@@ -120,7 +120,7 @@ class AdvancedWidgetAreaEditor extends WidgetAreaEditor {
         //@TODO Something is wrong with deleting a file in upload field (routing issue?)
         $field=$obj->getCMSFields()->dataFieldByName($realFieldName);
         if($field) {
-            $field->setForm($this->getForm());
+            $field->setForm($this->getFormShiv($obj));
             
             //Replace the request, we need the post variables to appear as if the widgets are in the top field
             $request=$this->getFakeRequest($request, $obj, $baseURL);
@@ -134,7 +134,7 @@ class AdvancedWidgetAreaEditor extends WidgetAreaEditor {
             // falling back to fieldByName, e.g. for getting tabs
             $field=$obj->getCMSFields()->fieldByName($realFieldName);
             if($field) {
-                $field->setForm($this->getForm());
+                $field->setForm($this->getFormShiv($obj));
                 
                 $request=$this->getFakeRequest($request, $obj, $baseURL);
                 
@@ -185,7 +185,7 @@ class AdvancedWidgetAreaEditor extends WidgetAreaEditor {
     protected function getFakeRequest(SS_HTTPRequest $request, Widget $sourceWidget, $baseLink) {
         $postVars=$request->postVars();
         $fieldName=rawurldecode($request->param('FieldName'));
-        $objID=preg_replace('/Widget\[(.*?)\]\[(.*?)\]$/', '$1', $fieldName);
+        $objID=preg_replace('/Widget\[(.*?)\]\[(.*?)\]\[(.*?)\]$/', '$2', $fieldName);
         
         
         //Pull the post data for the widget
@@ -236,10 +236,25 @@ class AdvancedWidgetAreaEditor extends WidgetAreaEditor {
         }
         
         
+        $headers=$request->getHeaders();
         $request=new SS_HTTPRequest($_SERVER['REQUEST_METHOD'], str_replace($baseLink, '', $request->getURL()), $request->getVars(), $finalPostVars, $request->getBody());
         $request->match('$Action/$ID/$OtherID');
         
+        //Merge in the headers
+        foreach($headers as $header=>$value) {
+            $request->addHeader($header, $value);
+        }
+        
+        
         return $request;
+    }
+    
+    /**
+     * Gets the shiv form
+     * @return {AdvancedWidgetFormShiv}
+     */
+    public function getFormShiv(Widget $obj) {
+        return new AdvancedWidgetFormShiv($this, $obj);
     }
 }
 ?>

@@ -1,5 +1,5 @@
 <?php
-class AdvancedWidgetFormShiv {
+class AdvancedWidgetFormShiv extends Form {
     /**
      * @var AdvancedWidgetAreaEditor
      */
@@ -60,6 +60,22 @@ class AdvancedWidgetFormShiv {
      */
     public function getSecurityToken() {
         return ($this->_widgetEditor->getForm() ? $this->_widgetEditor->getForm()->getSecurityToken():null);
+    }
+    
+    /**
+     * Gets the name of the form
+     * @return {string} Name of the form
+     */
+    public function getName() {
+        return ($this->_widgetEditor->getForm() ? $this->_widgetEditor->getForm()->getName():null);
+    }
+    
+    /**
+     * Gets the form containing the widget editor
+     * @return {Form} Raw form to retrieve
+     */
+    public function getForm() {
+        return $this;
     }
 }
 ?>
