@@ -45,6 +45,18 @@
             },
             rewriteWidgetAreaAttributes: function() {
                 //Do nothing the widgets should be written correctly coming from the cms
+            },
+            insertWidgetEditor: function(response) {
+                var usedWidgets = $('#usedWidgets-'+$(this).attr('name')).children();
+                
+                // Give the widget a unique id
+                var newID=parseInt($(this).data('maxid'))+1;
+                $(this).data('maxid', newID);
+                
+                var widgetContent = response.replace(/Widget\[(.*?)\]\[0\]/gi, "Widget[$1][new-" + (newID) + "]");
+                $('#usedWidgets-'+$(this).attr('name')).append(widgetContent);
+                
+                this.rewriteWidgetAreaAttributes();
             }
         });
         

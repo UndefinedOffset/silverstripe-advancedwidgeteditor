@@ -17,6 +17,13 @@ class AdvancedWidgetEditorInterface extends DataExtension {
 	public function AdvancedEditableSegment() {
 		return $this->owner->renderWith('AdvancedWidgetEditor');
 	}
+
+	/**
+	 * @return string
+	 */
+	public function AdvancedName() {
+		return 'Widget['.$this->_widgetEditor->getName().']['.$this->owner->ID.']';
+	}
     
     /**
      * Gets the fields to be used in the form
