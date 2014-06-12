@@ -50,6 +50,13 @@ class AdvancedWidgetEditorInterface extends DataExtension {
 			
 			$field->setName($name);
 			
+			
+			//Fix the gridstate field
+			if($field instanceof GridField) {
+			    $field->getState(false)->setName($name.'[GridState]');
+			}
+			
+			
 			$outputFields->push($field);
 		}
 		

@@ -117,7 +117,6 @@ class AdvancedWidgetAreaEditor extends WidgetAreaEditor {
         }
         
         
-        //@TODO Something is wrong with deleting a file in upload field (routing issue?)
         $field=$obj->getCMSFields()->dataFieldByName($realFieldName);
         if($field) {
             $field->setForm($this->getFormShiv($obj));
@@ -129,6 +128,12 @@ class AdvancedWidgetAreaEditor extends WidgetAreaEditor {
             $this->request->shift(substr_count($this->request->remaining(), '/')+1);
             
             $field->setName('Widget['.$this->getName().']['.$objId.']['.$field->getName().']');
+            
+            //Fix the gridstate field
+            if($field instanceof GridField) {
+                $field->getState(false)->setName($field->getName().'[GridState]');
+            }
+            
             return $field->handleRequest($request, $this->model);
         }else {
             // falling back to fieldByName, e.g. for getting tabs
@@ -142,6 +147,12 @@ class AdvancedWidgetAreaEditor extends WidgetAreaEditor {
                 $this->request->shift(substr_count($this->request->remaining(), '/')+1);
                 
                 $field->setName('Widget['.$this->getName().']['.$objId.']['.$field->getName().']');
+                
+                //Fix the gridstate field
+                if($field instanceof GridField) {
+                    $field->getState(false)->setName($field->getName().'[GridState]');
+                }
+                
                 return $field->handleRequest($request, $this->model);
             }
         }
@@ -199,15 +210,20 @@ class AdvancedWidgetAreaEditor extends WidgetAreaEditor {
         unset($finalPostVars['Widget']);
         
         
-        //Workaround for UploadField's confusing the request
+        //Workaround for UploadField's and GridFields confusing the request
         $fields=$sourceWidget->getCMSFields();
         $uploadFields=array();
+        $gridFields=array();
         foreach($fields as $field) {
             if($field instanceof UploadField) {
                 $uploadFields[]=$field->getName();
+            }else if($field instanceof GridField) {
+                $gridFields[]=$field->getName();
             }
         }
         
+        
+        //Re-orgazine the upload field data
         if(count($uploadFields)) {
             foreach($uploadFields as $field) {
                 $formFieldName='Widget['.$this->getName().']['.$objID.']['.$field.']';
@@ -236,15 +252,27 @@ class AdvancedWidgetAreaEditor extends WidgetAreaEditor {
         }
         
         
+        //Reorganize the gridfield data
+        if(count($gridFields)) {
+            foreach($gridFields as $field) {
+                $formFieldName='Widget['.$this->getName().']['.$objID.']['.$field.']';
+                $fieldData=array(
+                                $formFieldName=>$postVars['Widget'][$this->getName()][$objID][$field]
+                            );
+            }
+            
+            $finalPostVars=array_merge_recursive($finalPostVars, $fieldData);
+        }
+        
+        
         $headers=$request->getHeaders();
-        $request=new SS_HTTPRequest($_SERVER['REQUEST_METHOD'], str_replace($baseLink, '', $request->getURL()), $request->getVars(), $finalPostVars, $request->getBody());
+        $request=new SS_HTTPRequest($_SERVER['REQUEST_METHOD'], str_replace(rtrim($baseLink, '/'), '', rtrim($request->getURL(), '/')).'/', $request->getVars(), $finalPostVars, $request->getBody());
         $request->match('$Action/$ID/$OtherID');
         
         //Merge in the headers
         foreach($headers as $header=>$value) {
             $request->addHeader($header, $value);
         }
-        
         
         return $request;
     }
