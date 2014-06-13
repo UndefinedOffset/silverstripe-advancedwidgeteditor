@@ -12,55 +12,67 @@ class AdvancedWidgetEditorInterface extends DataExtension {
     
     /**
      * Wrapper for generating the display of the widget
-	 * @return {string} HTML to be used as the display
-	 */
-	public function AdvancedEditableSegment() {
-		return $this->owner->renderWith('AdvancedWidgetEditor');
-	}
+     * @return {string} HTML to be used as the display
+     */
+    public function AdvancedEditableSegment() {
+        return $this->owner->renderWith('AdvancedWidgetEditor');
+    }
 
-	/**
-	 * @return string
-	 */
-	public function AdvancedName() {
-		return 'Widget['.$this->_widgetEditor->getName().']['.$this->owner->ID.']';
-	}
+    /**
+     * @return string
+     */
+    public function AdvancedName() {
+        return 'Widget['.$this->_widgetEditor->getName().']['.$this->owner->ID.']';
+    }
     
     /**
      * Gets the fields to be used in the form
-	 * @return {FieldList} Fields to be used in the form
-	 */
-	public function AdvancedCMSEditor() {
-		$fields=$this->owner->getCMSFields();
-		$outputFields=new FieldList();
+     * @return {FieldList} Fields to be used in the form
+     */
+    public function AdvancedCMSEditor() {
+        $fields=$this->owner->getCMSFields();
+        $outputFields=new FieldList();
         
-		foreach($fields as $field) {
-		    $field->setForm(new AdvancedWidgetFormShiv($this->_widgetEditor, $this->owner));
-		    
-			$name=$field->getName();
-			if(isset($this->owner->$name) || $this->owner->hasMethod($name) || ($this->owner->hasMethod('hasField') && $this->owner->hasField($name))) {
-				$field->setValue($this->owner->__get($name), $this->owner);
-			}
-			
-			//Workaround for UploadField fixes an issue detecting if the relationship is a has_one relationship
-			if($field instanceof UploadField && $this->owner->has_one($name)) {
-			    $field->setAllowedMaxFileNumber(1);
-			}
-			
-			$name=preg_replace("/([A-Za-z0-9\-_]+)/", "Widget[".$this->_widgetEditor->getName()."][".$this->owner->ID."][\\1]", $name);
-			
-			$field->setName($name);
-			
-			
-			//Fix the gridstate field
-			if($field instanceof GridField) {
-			    $field->getState(false)->setName($name.'[GridState]');
-			}
-			
-			
-			$outputFields->push($field);
-		}
-		
-		return $outputFields;
-	}
+        foreach($fields as $field) {
+            $field->setForm(new AdvancedWidgetFormShiv($this->_widgetEditor, $this->owner));
+            
+            $name=$field->getName();
+            if(isset($this->owner->$name) || $this->owner->hasMethod($name) || ($this->owner->hasMethod('hasField') && $this->owner->hasField($name))) {
+                $field->setValue($this->owner->__get($name), $this->owner);
+            }
+            
+            //Workaround for UploadField fixes an issue detecting if the relationship is a has_one relationship
+            if($field instanceof UploadField && $this->owner->has_one($name)) {
+                $field->setAllowedMaxFileNumber(1);
+            }
+            
+            //Workaround for silverstripe/silverstripe-widgets#25
+            if($field instanceof CheckboxField) {
+                if($this->_widgetEditor->getForm() && $this->_widgetEditor->getForm()->getController() && $data=$this->_widgetEditor->getForm()->getController()->getRequest()->requestVar('Widget')) {
+                    if(isset($data[$this->_widgetEditor->getName()][$this->owner->ID])) {
+                        $data=$data[$this->_widgetEditor->getName()][$this->owner->ID];
+                        if(!isset($data[$field->getName()])) {
+                            $field->setValue(0);
+                        }
+                    }
+                }
+            }
+            
+            
+            $name=preg_replace("/([A-Za-z0-9\-_]+)/", "Widget[".$this->_widgetEditor->getName()."][".$this->owner->ID."][\\1]", $name);
+            $field->setName($name);
+            
+            
+            //Fix the gridstate field
+            if($field instanceof GridField) {
+                $field->getState(false)->setName($name.'[GridState]');
+            }
+            
+            
+            $outputFields->push($field);
+        }
+        
+        return $outputFields;
+    }
 }
 ?>
