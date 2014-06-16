@@ -113,7 +113,7 @@ class AdvancedWidgetAreaEditor extends WidgetAreaEditor {
                 $obj=singleton($className);
             }
         }else {
-            return;
+            return $this->httpError(404, 'Widget not found');
         }
         
         
@@ -157,7 +157,7 @@ class AdvancedWidgetAreaEditor extends WidgetAreaEditor {
             }
         }
         
-        return;
+        return $this->httpError(404, 'Widget field not found');
     }
     
     /**
