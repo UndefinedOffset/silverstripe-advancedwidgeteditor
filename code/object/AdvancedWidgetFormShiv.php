@@ -47,6 +47,14 @@ class AdvancedWidgetFormShiv extends Form {
     }
     
     /**
+     * Wrapper for getting the form's controller
+     * @return {Controller} Form's controller or boolean false
+     */
+	public function getController() {
+		return $this->Controller();
+	}
+    
+    /**
      * Gets the link to the widget editor plus the widgets class name
      * @return {string} Link to the widget editor plus the widgets class name
      */
