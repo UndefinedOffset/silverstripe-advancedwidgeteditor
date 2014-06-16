@@ -1,5 +1,7 @@
 Advanced Widget Editor
 =================
+[![Build Status](https://travis-ci.org/UndefinedOffset/silverstripe-advancedwidgeteditor.png)](https://travis-ci.org/UndefinedOffset/silverstripe-advancedwidgeteditor)
+
 Replaces the Widget Editor to enable support for advanced form fields such as UploadField
 
 ## Requirements

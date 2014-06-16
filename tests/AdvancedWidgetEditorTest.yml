@@ -1,0 +1,27 @@
+AdvancedWidgetEditorTest_TestObject:
+    test1:
+        Title: "Object 1"
+    test2:
+        Title: "Object 2"
+    test3:
+        Title: "Object 3"
+    test4:
+        Title: "Object 4"
+
+
+AdvancedWidgetEditorTest_TestWidget:
+    widget1:
+        Title: "Test Widget"
+        TestObjects: =>AdvancedWidgetEditorTest_TestObject.test1,=>AdvancedWidgetEditorTest_TestObject.test2,=>AdvancedWidgetEditorTest_TestObject.test3,=>AdvancedWidgetEditorTest_TestObject.test4
+
+
+WidgetArea:
+    area1:
+        Widgets: =>AdvancedWidgetEditorTest_TestWidget.widget1
+
+
+AdvancedWidgetEditorTest_FakePage:
+    testpage:
+        Title: "AWET Fake Page"
+        MenuTitle: "AWET Fake Page"
+        SideBar: =>WidgetArea.area1
