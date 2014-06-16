@@ -24,7 +24,7 @@ class AdvancedWidgetAreaEditor extends WidgetAreaEditor {
     }
     
     /**
-	 * 
+	 *
 	 * @return ArrayList
 	 */
     public function AvailableWidgets() {
@@ -33,10 +33,10 @@ class AdvancedWidgetAreaEditor extends WidgetAreaEditor {
         foreach($this->widgetClasses as $widgetClass) {
             $classes=ClassInfo::subclassesFor($widgetClass);
             
-            if(isset($classes['Widget'])) { 
-                unset($classes['Widget']); 
-            }else if(isset($classes[0]) && $classes[0]=='Widget') { 
-                unset($classes[0]); 
+            if(isset($classes['Widget'])) {
+                unset($classes['Widget']);
+            }else if(isset($classes[0]) && $classes[0]=='Widget') {
+                unset($classes[0]);
             }
             
             
@@ -194,74 +194,78 @@ class AdvancedWidgetAreaEditor extends WidgetAreaEditor {
      * @return {SS_HTTPRequest} Fake HTTP Request used to fool the form field into thinking the request was made to it directly
      */
     protected function getFakeRequest(SS_HTTPRequest $request, Widget $sourceWidget, $baseLink) {
-        $postVars=$request->postVars();
         $fieldName=rawurldecode($request->param('FieldName'));
         $objID=preg_replace('/Widget\[(.*?)\]\[(.*?)\]\[(.*?)\]$/', '$2', $fieldName);
+        $finalPostVars=array();
         
         
-        //Pull the post data for the widget
-        if(isset($postVars['Widget'][$this->getName()][$objID])) {
-            $finalPostVars=$postVars['Widget'][$this->getName()][$objID];
-        }else {
-            $finalPostVars=array();
-        }
-        
-        $finalPostVars=array_merge($finalPostVars, $postVars);
-        unset($finalPostVars['Widget']);
-        
-        
-        //Workaround for UploadField's and GridFields confusing the request
-        $fields=$sourceWidget->getCMSFields();
-        $uploadFields=array();
-        $gridFields=array();
-        foreach($fields as $field) {
-            if($field instanceof UploadField) {
-                $uploadFields[]=$field->getName();
-            }else if($field instanceof GridField) {
-                $gridFields[]=$field->getName();
+        if($request->isPOST()) {
+            $postVars=$request->postVars();
+            
+            //Pull the post data for the widget
+            if(isset($postVars['Widget'][$this->getName()][$objID])) {
+                $finalPostVars=$postVars['Widget'][$this->getName()][$objID];
+            }else {
+                $finalPostVars=array();
             }
-        }
-        
-        
-        //Re-orgazine the upload field data
-        if(count($uploadFields)) {
-            foreach($uploadFields as $field) {
-                $formFieldName='Widget['.$this->getName().']['.$objID.']['.$field.']';
-                $fieldData=array(
-                                $formFieldName=>array(
-                                            'name'=>array('Uploads'=>array()),
-                                            'type'=>array('Uploads'=>array()),
-                                            'tmp_name'=>array('Uploads'=>array()),
-                                            'error'=>array('Uploads'=>array()),
-                                            'size'=>array('Uploads'=>array())
-                                        )
-                            );
-                
-                if(isset($postVars['Widget']['name'][$this->getName()][$objID][$field]['Uploads'])) {
-                    for($i=0;$i<count($postVars['Widget']['name'][$this->getName()][$objID][$field]['Uploads']);$i++) {
-                        $fieldData[$formFieldName]['name']['Uploads'][]=$postVars['Widget']['name'][$this->getName()][$objID][$field]['Uploads'][$i];
-                        $fieldData[$formFieldName]['type']['Uploads'][]=$postVars['Widget']['type'][$this->getName()][$objID][$field]['Uploads'][$i];
-                        $fieldData[$formFieldName]['tmp_name']['Uploads'][]=$postVars['Widget']['tmp_name'][$this->getName()][$objID][$field]['Uploads'][$i];
-                        $fieldData[$formFieldName]['error']['Uploads'][]=$postVars['Widget']['error'][$this->getName()][$objID][$field]['Uploads'][$i];
-                        $fieldData[$formFieldName]['size']['Uploads'][]=$postVars['Widget']['size'][$this->getName()][$objID][$field]['Uploads'][$i];
+            
+            $finalPostVars=array_merge($finalPostVars, $postVars);
+            unset($finalPostVars['Widget']);
+            
+            
+            //Workaround for UploadField's and GridFields confusing the request
+            $fields=$sourceWidget->getCMSFields();
+            $uploadFields=array();
+            $gridFields=array();
+            foreach($fields as $field) {
+                if($field instanceof UploadField) {
+                    $uploadFields[]=$field->getName();
+                }else if($field instanceof GridField) {
+                    $gridFields[]=$field->getName();
+                }
+            }
+            
+            
+            //Re-orgazine the upload field data
+            if(count($uploadFields)) {
+                foreach($uploadFields as $field) {
+                    $formFieldName='Widget['.$this->getName().']['.$objID.']['.$field.']';
+                    $fieldData=array(
+                                    $formFieldName=>array(
+                                                'name'=>array('Uploads'=>array()),
+                                                'type'=>array('Uploads'=>array()),
+                                                'tmp_name'=>array('Uploads'=>array()),
+                                                'error'=>array('Uploads'=>array()),
+                                                'size'=>array('Uploads'=>array())
+                                            )
+                                );
+                    
+                    if(isset($postVars['Widget']['name'][$this->getName()][$objID][$field]['Uploads'])) {
+                        for($i=0;$i<count($postVars['Widget']['name'][$this->getName()][$objID][$field]['Uploads']);$i++) {
+                            $fieldData[$formFieldName]['name']['Uploads'][]=$postVars['Widget']['name'][$this->getName()][$objID][$field]['Uploads'][$i];
+                            $fieldData[$formFieldName]['type']['Uploads'][]=$postVars['Widget']['type'][$this->getName()][$objID][$field]['Uploads'][$i];
+                            $fieldData[$formFieldName]['tmp_name']['Uploads'][]=$postVars['Widget']['tmp_name'][$this->getName()][$objID][$field]['Uploads'][$i];
+                            $fieldData[$formFieldName]['error']['Uploads'][]=$postVars['Widget']['error'][$this->getName()][$objID][$field]['Uploads'][$i];
+                            $fieldData[$formFieldName]['size']['Uploads'][]=$postVars['Widget']['size'][$this->getName()][$objID][$field]['Uploads'][$i];
+                        }
                     }
+                    
+                    $finalPostVars=array_merge_recursive($finalPostVars, $fieldData);
+                }
+            }
+            
+            
+            //Reorganize the gridfield data
+            if(count($gridFields)) {
+                foreach($gridFields as $field) {
+                    $formFieldName='Widget['.$this->getName().']['.$objID.']['.$field.']';
+                    $fieldData=array(
+                                    $formFieldName=>$postVars['Widget'][$this->getName()][$objID][$field]
+                                );
                 }
                 
                 $finalPostVars=array_merge_recursive($finalPostVars, $fieldData);
             }
-        }
-        
-        
-        //Reorganize the gridfield data
-        if(count($gridFields)) {
-            foreach($gridFields as $field) {
-                $formFieldName='Widget['.$this->getName().']['.$objID.']['.$field.']';
-                $fieldData=array(
-                                $formFieldName=>$postVars['Widget'][$this->getName()][$objID][$field]
-                            );
-            }
-            
-            $finalPostVars=array_merge_recursive($finalPostVars, $fieldData);
         }
         
         
