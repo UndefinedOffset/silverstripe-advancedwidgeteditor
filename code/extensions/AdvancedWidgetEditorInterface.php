@@ -46,18 +46,6 @@ class AdvancedWidgetEditorInterface extends DataExtension {
                 $field->setAllowedMaxFileNumber(1);
             }
             
-            //Workaround for silverstripe/silverstripe-widgets#25
-            if($field instanceof CheckboxField) {
-                if($this->_widgetEditor->getForm() && $this->_widgetEditor->getForm()->getController() && $data=$this->_widgetEditor->getForm()->getController()->getRequest()->requestVar('Widget')) {
-                    if(isset($data[$this->_widgetEditor->getName()][$this->owner->ID])) {
-                        $data=$data[$this->_widgetEditor->getName()][$this->owner->ID];
-                        if(!isset($data[$field->getName()])) {
-                            $field->setValue(0);
-                        }
-                    }
-                }
-            }
-            
             
             $name=preg_replace("/([A-Za-z0-9\-_]+)/", "Widget[".$this->_widgetEditor->getName()."][".$this->owner->ID."][\\1]", $name);
             $field->setName($name);
