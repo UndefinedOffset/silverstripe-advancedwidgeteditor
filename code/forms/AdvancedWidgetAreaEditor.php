@@ -256,7 +256,7 @@ class AdvancedWidgetAreaEditor extends WidgetAreaEditor {
             
             
             //Reorganize the gridfield data
-            if(count($gridFields)) {
+            if(count($gridFields) && isset($postVars['Widget'][$this->getName()][$objID])) {
                 foreach($gridFields as $field) {
                     $formFieldName='Widget['.$this->getName().']['.$objID.']['.$field.']';
                     $fieldData=array(
