@@ -98,7 +98,8 @@ class AdvancedWidgetAreaEditor extends WidgetAreaEditor {
         $className=$request->param('Type');
         $fieldName=rawurldecode($request->param('FieldName'));
         $realFieldName=preg_replace('/^Widget\[(.*?)\]\[(.*?)\]\[(.*?)\]$/', '$3', $fieldName);
-        $baseURL=Controller::join_links($this->Link('field'), $className, 'field', $request->param('FieldName')).'/';
+        $baseURL=preg_replace('/\?(.*?)$/', '', $this->Link('field')); //Get the base link stripping parameters
+        $baseURL=Controller::join_links($baseURL, $className, 'field', $request->param('FieldName'), '/');
         
         
         //Parse field name for the id
