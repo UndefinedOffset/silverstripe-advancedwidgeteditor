@@ -42,12 +42,15 @@ class AdvancedWidgetAreaEditor extends WidgetAreaEditor {
             
             $record=$this->form->getRecord();
             $availableWidgets=null;
+            $restrictedWidgets=null;
             if($record) {
                 $availableWidgets=$record->config()->available_widgets;
+                $restrictedWidgets=$record->config()->restricted_widgets;
             }
             
+            
             foreach($classes as $class) {
-                if(!empty($availableWidgets) && is_array($availableWidgets) && !in_array($class, $availableWidgets)) {
+                if((!empty($availableWidgets) && is_array($availableWidgets) && !in_array($class, $availableWidgets)) || (!empty($restrictedWidgets) && is_array($restrictedWidgets) && in_array($class, $restrictedWidgets))) {
                     continue;
                 }
                 
