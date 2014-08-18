@@ -53,7 +53,8 @@
                 var newID=parseInt($(this).data('maxid'))+1;
                 $(this).data('maxid', newID);
                 
-                var widgetContent = response.replace(/Widget\[(.*?)\]\[0\]/gi, "Widget[$1][new-" + (newID) + "]");
+                var widgetContent=response.replace(/Widget\[(.*?)\]\[0\]/gi, "Widget[$1][new-" + (newID) + "]");
+                widgetContent=widgetContent.replace(new RegExp('Widget-' + ($(this).attr('name')) + '-0-','gi'), "Widget-" + ($(this).attr('name')) + "-new-" + (newID) + "-");
                 $('#usedWidgets-'+$(this).attr('name')).append(widgetContent);
                 
                 this.rewriteWidgetAreaAttributes();
