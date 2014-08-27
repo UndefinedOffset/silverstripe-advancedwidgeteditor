@@ -1,6 +1,14 @@
 (function($) {
     $.entwine('ss', function($) {
         $('.WidgetAreaEditor.AdvancedWidgetAreaEditor').entwine({
+            onadd: function() {
+                this._super();
+                
+                //If Upload Fields are present ensure the enctype is right
+                if($(this).find('.ss-uploadfield').length>0) {
+                    $(this).closest('form').attr('enctype', 'multipart/form-data');
+                }
+            },
             addAdvancedWidget: function(className, holder) {
                 if($('#WidgetAreaEditor-'+holder).attr('maxwidgets')) {
                     var maxCount = $('#WidgetAreaEditor-'+holder).attr('maxwidgets');
@@ -35,14 +43,6 @@
                     },
                 });
             },
-            insertWidgetEditor: function(response) {
-                this._super(response);
-                
-                //If Upload Fields are present ensure the enctype is right
-                if($(this).find('.ss-uploadfield').length>0) {
-                    $(this).closest('form').attr('enctype', 'multipart/form-data');
-                }
-            },
             rewriteWidgetAreaAttributes: function() {
                 //Do nothing the widgets should be written correctly coming from the cms
             },
@@ -56,6 +56,11 @@
                 var widgetContent=response.replace(/Widget\[(.*?)\]\[0\]/gi, "Widget[$1][new-" + (newID) + "]");
                 widgetContent=widgetContent.replace(new RegExp('Widget-' + ($(this).attr('name')) + '-0-','gi'), "Widget-" + ($(this).attr('name')) + "-new-" + (newID) + "-");
                 $('#usedWidgets-'+$(this).attr('name')).append(widgetContent);
+                
+                //If Upload Fields are present ensure the enctype is right
+                if($(this).find('.ss-uploadfield').length>0) {
+                    $(this).closest('form').attr('enctype', 'multipart/form-data');
+                }
                 
                 this.rewriteWidgetAreaAttributes();
             }
