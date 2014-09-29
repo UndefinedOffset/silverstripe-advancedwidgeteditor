@@ -292,5 +292,30 @@ class AdvancedWidgetAreaEditor extends WidgetAreaEditor {
     public function getFormShiv(Widget $obj) {
         return new AdvancedWidgetFormShiv($this, $obj);
     }
+    
+    /**
+     * @param DataObjectInterface $record
+     */
+    public function saveInto(DataObjectInterface $record) {
+        //Workaround for upload field removal issues see issue #8, this should really be re-factored as part of #6
+        $usedWidgets=$this->UsedWidgets();
+        if($usedWidgets->Count()) {
+            foreach($usedWidgets as $widget) {
+                $fields=$widget->AdvancedCMSEditor();
+                foreach($fields as $field) {
+                    if($field instanceof UploadField) {
+                        if(preg_match_all('/^Widget\[(.*)\]\[(\d+)\]\[(.*)\]$/', $field->getName(), $matches)!=false && count($matches)>1) {
+                            if(!isset($_REQUEST['Widget'][$matches[1][0]][$matches[2][0]][$matches[3][0]]['Files'])) {
+                                $_REQUEST['Widget'][$matches[1][0]][$matches[2][0]][$matches[3][0]]['Files']=array();
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        
+        return parent::saveInto($record);
+    }
 }
 ?>
