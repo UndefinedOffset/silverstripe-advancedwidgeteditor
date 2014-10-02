@@ -301,6 +301,11 @@ class AdvancedWidgetAreaEditor extends WidgetAreaEditor {
         $usedWidgets=$this->UsedWidgets();
         if($usedWidgets->Count()) {
             foreach($usedWidgets as $widget) {
+                //Skip widgets not present in the request
+                if(!isset($_REQUEST['Widget'][$this->getName()][$widget->ID])) {
+                    continue;
+                }
+                
                 $fields=$widget->AdvancedCMSEditor();
                 foreach($fields as $field) {
                     if($field instanceof UploadField) {
