@@ -24,9 +24,9 @@ class AdvancedWidgetAreaEditor extends WidgetAreaEditor {
     }
     
     /**
-	 *
-	 * @return ArrayList
-	 */
+     *
+     * @return ArrayList
+     */
     public function AvailableWidgets() {
         $widgets=new ArrayList();
 
@@ -297,30 +297,96 @@ class AdvancedWidgetAreaEditor extends WidgetAreaEditor {
      * @param DataObjectInterface $record
      */
     public function saveInto(DataObjectInterface $record) {
-        //Workaround for upload field removal issues see issue #8, this should really be re-factored as part of #6
-        $usedWidgets=$this->UsedWidgets();
-        if($usedWidgets->Count()) {
-            foreach($usedWidgets as $widget) {
-                //Skip widgets not present in the request
-                if(!isset($_REQUEST['Widget'][$this->getName()][$widget->ID])) {
+        $name=$this->name;
+        $idName=$name."ID";
+        
+        $widgetarea=$record->getComponent($name);
+        $widgetarea->write();
+        
+        $record->$idName=$widgetarea->ID;
+        
+        $widgets=$widgetarea->Items();
+        
+        // store the field IDs and delete the missing fields
+        // alternatively, we could delete all the fields and re add them
+        $missingWidgets=array();
+        
+        if($widgets) {
+            foreach($widgets as $existingWidget) {
+                $missingWidgets[$existingWidget->ID]=$existingWidget;
+            }
+        }
+        
+        if(isset($_REQUEST['Widget'])) {
+            foreach(array_keys($_REQUEST['Widget']) as $widgetAreaName) {
+                if($widgetAreaName!==$this->name) {
                     continue;
                 }
                 
-                $fields=$widget->AdvancedCMSEditor();
-                foreach($fields as $field) {
-                    if($field instanceof UploadField) {
-                        if(preg_match_all('/^Widget\[(.*)\]\[(\d+)\]\[(.*)\]$/', $field->getName(), $matches)!=false && count($matches)>1) {
-                            if(!isset($_REQUEST['Widget'][$matches[1][0]][$matches[2][0]][$matches[3][0]]['Files'])) {
-                                $_REQUEST['Widget'][$matches[1][0]][$matches[2][0]][$matches[3][0]]['Files']=array();
-                            }
+                $widgetForm=new Form($this, 'WidgetForm', new FieldList(), new FieldList());
+                
+                foreach(array_keys($_REQUEST['Widget'][$widgetAreaName]) as $newWidgetID) {
+                    $newWidgetData=$_REQUEST['Widget'][$widgetAreaName][$newWidgetID];
+                    
+                    // Sometimes the id is "new-1" or similar, ensure this doesn't get into the query
+                    if(!is_numeric($newWidgetID)) {
+                        $newWidgetID=0;
+                    }
+                    
+                    // \"ParentID\" = '0' is for the new page
+                    $widget=DataObject::get_one(
+                                                'Widget',
+                                                "(\"ParentID\"='{$record->$name()->ID}' OR ".
+                                                "\"ParentID\"='0') AND \"Widget\".\"ID\"='$newWidgetID'"
+                                            );
+                    
+                    // check if we are updating an existing widget
+                    if($widget && isset($missingWidgets[$widget->ID])) {
+                        unset($missingWidgets[$widget->ID]);
+                    }
+                    
+                    // create a new object
+                    if(!$widget && !empty($newWidgetData['Type']) && class_exists($newWidgetData['Type'])) {
+                        $widget=new $newWidgetData['Type']();
+                        $widget->ID=0;
+                        $widget->ParentID=$record->$name()->ID;
+
+                        if(!is_subclass_of($widget, 'Widget')) {
+                            $widget=null;
                         }
+                    }
+                    
+                    if($widget) {
+                        if($widget->ParentID==0) {
+                            $widget->ParentID=$record->$name()->ID;
+                        }
+                        
+                        //Set the widget editor
+                        $widget->setWidgetEditor($this);
+                        
+                        //Set the form's fields
+                        $widgetForm->setFields($widget->getCMSFields());
+                        
+                        //Populate the form
+                        $widgetForm->loadDataFrom($newWidgetData);
+                        
+                        
+                        //Save the form into the widget and write
+                        $widgetForm->saveInto($widget);
+                        $widget->write();
                     }
                 }
             }
         }
         
-        
-        return parent::saveInto($record);
+        // remove the fields not saved
+        if($missingWidgets) {
+            foreach($missingWidgets as $removedWidget) {
+                if(isset($removedWidget) && is_numeric($removedWidget->ID)) {
+                    $removedWidget->delete();
+                }
+            }
+        }
     }
 }
 ?>
