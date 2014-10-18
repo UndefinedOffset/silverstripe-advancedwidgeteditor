@@ -1,0 +1,9 @@
+.AdvancedWidgetAreaEditor.readonly .usedWidgetsHolder {
+    float: none;
+    
+    width: auto;
+}
+
+.AdvancedWidgetAreaEditor.readonly .usedWidgets .Widget h3 {
+    cursor: default;
+}

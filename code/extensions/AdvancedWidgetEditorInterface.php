@@ -12,10 +12,11 @@ class AdvancedWidgetEditorInterface extends DataExtension {
     
     /**
      * Wrapper for generating the display of the widget
+     * @param {bool} $readonly Boolean true if the fields should be rendered as readonly
      * @return {string} HTML to be used as the display
      */
-    public function AdvancedEditableSegment() {
-        return $this->owner->renderWith('AdvancedWidgetEditor');
+    public function AdvancedEditableSegment($readonly=false) {
+        return $this->owner->customise(array('IsEditorReadonly'=>$readonly))->renderWith('AdvancedWidgetEditor');
     }
 
     /**
@@ -27,9 +28,10 @@ class AdvancedWidgetEditorInterface extends DataExtension {
     
     /**
      * Gets the fields to be used in the form
+     * @param {bool} $readonly Boolean true if the fields should be rendered as readonly
      * @return {FieldList} Fields to be used in the form
      */
-    public function AdvancedCMSEditor() {
+    public function AdvancedCMSEditor($readonly=false) {
         $fields=$this->owner->getCMSFields();
         $outputFields=new FieldList();
         
@@ -58,6 +60,12 @@ class AdvancedWidgetEditorInterface extends DataExtension {
             
             
             $outputFields->push($field);
+        }
+        
+        
+        //If readonly make the whole fieldlist readonly
+        if($readonly) {
+            $outputFields=$outputFields->makeReadonly();
         }
         
         return $outputFields;

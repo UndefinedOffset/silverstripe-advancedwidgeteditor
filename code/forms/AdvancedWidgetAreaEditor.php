@@ -16,8 +16,15 @@ class AdvancedWidgetAreaEditor extends WidgetAreaEditor {
      */
     public function FieldHolder($properties=array()) {
         Requirements::css('widgets/css/WidgetAreaEditor.css');
-        Requirements::javascript('widgets/javascript/WidgetAreaEditor.js');
         
+        if($this->isReadonly() || $this->isDisabled()) {
+            Requirements::css(AWE_BASE.'/css/AdvancedWidgetAreaEditor_readonly.css');
+            
+            return $this->renderWith('AdvancedWidgetAreaEditor_readonly');
+        }
+        
+        
+        Requirements::javascript('widgets/javascript/WidgetAreaEditor.js');
         Requirements::javascript(AWE_BASE.'/javascript/AdvancedWidgetAreaEditor.js');
         
         return $this->renderWith('AdvancedWidgetAreaEditor');
@@ -294,9 +301,33 @@ class AdvancedWidgetAreaEditor extends WidgetAreaEditor {
     }
     
     /**
+     * Returns a readonly version of this field
+     */
+    public function performReadonlyTransformation() {
+        $copy=clone $this;
+        $copy->setReadonly(true);
+        
+        return $copy;
+    }
+    
+    /**
+     * Returns a disabled version of this field
+     */
+    public function performDisabledTransformation() {
+        $copy=clone $this;
+        $copy->setDisabled(true);
+        
+        return $copy;
+    }
+    
+    /**
      * @param DataObjectInterface $record
      */
     public function saveInto(DataObjectInterface $record) {
+        if($this->isDisabled() || $this->isReadonly()) {
+            return;
+        }
+        
         $name=$this->name;
         $idName=$name."ID";
         
