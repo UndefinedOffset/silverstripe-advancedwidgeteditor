@@ -90,11 +90,62 @@ class AdvancedWidgetEditorTest extends FunctionalTest {
         $gridField=$widget->AdvancedCMSEditor()->dataFieldByName('Widget[SideBar]['.$widget->ID.'][TestObjects]');
         
         
-        $response=$this->get($gridField->Link('item/'.$widget->TestObjects()->first()->ID.'/edit?ajax=1', null, array('X-Requested-With'=>'XMLHttpRequest')));
+        $response=$this->get($gridField->Link('item/'.$widget->TestObjects()->first()->ID.'/edit?ajax=1'), null, array('X-Requested-With'=>'XMLHttpRequest'));
         
         
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertContains('id="Form_ItemEditForm"', $response->getBody(), 'Response did not contain the item edit form');
+    }
+    
+    /**
+     * Tests to see if the widget editor is saving correctly
+     */
+    public function testEditorSaving() {
+        $this->logInWithPermission('ADMIN');
+        
+        $page=$this->objFromFixture('AdvancedWidgetEditorTest_FakePage', 'testpage');
+        $page->publish('Stage', 'Live');
+        
+        $controller=new AdvancedWidgetEditor_TestController();
+        $widget=$controller->TestForm()->Fields()->dataFieldByName('SideBar')->UsedWidgets()->first();
+        
+        $img=$this->objFromFixture('Image', 'awesample');
+        
+        
+        $response=$this->post($controller->TestForm()->FormAction(), array(
+                                                                            'Widget'=>array(
+                                                                                            'SideBar'=>array(
+                                                                                                            $widget->ID=array(
+                                                                                                                                'Title'=>'Changed Title',
+                                                                                                                                'SampleBoolean'=>1,
+                                                                                                                                'Image'=>array(
+                                                                                                                                                'Files'=>array(
+                                                                                                                                                                $img->ID
+                                                                                                                                                            )
+                                                                                                                                            ),
+                                                                                                                                'Sort'=>$widget->Sort,
+                                                                                                                                'Type'=>$widget->ClassName
+                                                                                                                            )
+                                                                                                        )
+                                                                                        ),
+                                                                            'SideBarID'=>$widget->ParentID,
+                                                                            'action_doSave'=>1
+                                                                        ), array('X-Requested-With'=>'XMLHttpRequest'));
+        
+        //Verify we had a 200 response
+        $this->assertEquals(200, $response->getStatusCode());
+        
+        $widget=$controller->TestForm()->Fields()->dataFieldByName('SideBar')->UsedWidgets()->first();
+        
+        
+        //Verify the widget exists
+        $this->assertInstanceOf('AdvancedWidgetEditorTest_TestWidget', $widget);
+        
+        
+        //Verify the fields changed
+        $this->assertEquals('Changed Title', $widget->Title);
+        $this->assertEquals(1, $widget->SampleBoolean);
+        $this->assertEquals($img->ID, $widget->ImageID);
     }
 }
 
@@ -105,11 +156,13 @@ class AdvancedWidgetEditorTest_FakePage extends Page implements TestOnly {
 }
 
 class AdvancedWidgetEditorTest_TestWidget extends Widget implements TestOnly {
-    private static $title=array(
-                                'Title'=>'Varchar'
-                            );
+    private static $db=array(
+                            'Title'=>'Varchar',
+                            'SampleBoolean'=>'Boolean'
+                        );
     
     private static $has_one=array(
+                                'Image'=>'Image',
                                 'TestLink'=>'SiteTree'
                             );
     
@@ -126,12 +179,14 @@ class AdvancedWidgetEditorTest_TestWidget extends Widget implements TestOnly {
         return new FieldList(
                             new TextField('Title', 'Title'),
                             new TreeDropdownField('TestLinkID', 'Test Link', 'SiteTree'),
-                            new GridField('TestObjects', 'Test Objects', $this->TestObjects(), GridFieldConfig_RecordEditor::create(10))
+                            new GridField('TestObjects', 'Test Objects', $this->TestObjects(), GridFieldConfig_RecordEditor::create(10)),
+                            new UploadField('Image', 'Image'),
+                            new CheckboxField('SampleBoolean', 'A simple checkbox')
                         );
     }
     
 	public function Title() {
-		return $this->Title ? $this->Title : self::$title;
+		return $this->Title;
 	}
 }
 
@@ -151,11 +206,19 @@ class AdvancedWidgetEditor_TestController extends Controller implements TestOnly
     public function TestForm() {
         $page=AdvancedWidgetEditorTest_FakePage::get()->first();
         
-        $form=new Form($this, 'TestForm', new FieldList(new AdvancedWidgetAreaEditor('SideBar')), new FieldList());
+        $form=new Form($this, 'TestForm', new FieldList(new AdvancedWidgetAreaEditor('SideBar')), new FieldList(new FormAction('doSave', 'Save')));
         $form->loadDataFrom($page);
         $form->disableSecurityToken();
         
         return $form;
+    }
+    
+    public function doSave($data, Form $form) {
+        $page=AdvancedWidgetEditorTest_FakePage::get()->first();
+        $form->saveInto($page);
+        $page->write();
+        
+        return 'HELO';
     }
 }
 ?>

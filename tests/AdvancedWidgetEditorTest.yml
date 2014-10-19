@@ -25,3 +25,9 @@ AdvancedWidgetEditorTest_FakePage:
         Title: "AWET Fake Page"
         MenuTitle: "AWET Fake Page"
         SideBar: =>WidgetArea.area1
+
+Image:
+    awesample:
+        Name: 'awe-sample.jpg'
+        Title: 'awe sample'
+        Filename: 'assets/awe-sample.jpg'
