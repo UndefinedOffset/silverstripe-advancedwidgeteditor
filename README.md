@@ -6,7 +6,7 @@ Replaces the Widget Editor to enable support for advanced form fields such as Up
 
 ## Requirements
 * SilverStripe 3.1.x
-* [SilverStripe Widgets 1.0.x](https://github.com/silverstripe/silverstripe-widgets/)
+* [SilverStripe Widgets](https://github.com/silverstripe/silverstripe-widgets/)
 
 ## Installation
 * Download the module from here https://github.com/UndefinedOffset/silverstripe-advancedwidgeteditor/archive/master.zip
