@@ -1,5 +1,6 @@
 <?php
-class AdvancedWidgetEditorTest extends FunctionalTest {
+class AdvancedWidgetEditorTest extends FunctionalTest
+{
     protected static $fixture_file='AdvancedWidgetEditorTest.yml';
     
     
@@ -12,7 +13,8 @@ class AdvancedWidgetEditorTest extends FunctionalTest {
     /**
      * Tests to ensure that the field names are being correctly re-written by php
      */
-    public function testFieldNameRewrite() {
+    public function testFieldNameRewrite()
+    {
         $editor=new AdvancedWidgetAreaEditor('SideBar');
         $widget=new AdvancedWidgetEditorTest_TestWidget();
         $widget->setWidgetEditor($editor);
@@ -26,7 +28,8 @@ class AdvancedWidgetEditorTest extends FunctionalTest {
     /**
      * Tests to ensure that the widget editor is correctly being set on UsedWidgets
      */
-    public function testUsedWidets() {
+    public function testUsedWidets()
+    {
         $page=$this->objFromFixture('AdvancedWidgetEditorTest_FakePage', 'testpage');
         
         $form=new Form($page, 'TestForm', new FieldList($editor=new AdvancedWidgetAreaEditor('SideBar')), new FieldList());
@@ -39,7 +42,8 @@ class AdvancedWidgetEditorTest extends FunctionalTest {
     /**
      * Tests to see if the add widget routing is feeding in correctly and returning the expected response
      */
-    public function testAddRouting() {
+    public function testAddRouting()
+    {
         $page=$this->objFromFixture('AdvancedWidgetEditorTest_FakePage', 'testpage');
         $page->publish('Stage', 'Live');
         
@@ -52,7 +56,8 @@ class AdvancedWidgetEditorTest extends FunctionalTest {
     /**
      * Tests to see if routing to a field like TreeDropdownField is working
      */
-    public function testNestedTreeDropdownRouting() {
+    public function testNestedTreeDropdownRouting()
+    {
         $page=$this->objFromFixture('AdvancedWidgetEditorTest_FakePage', 'testpage');
         $page->publish('Stage', 'Live');
         
@@ -79,7 +84,8 @@ class AdvancedWidgetEditorTest extends FunctionalTest {
     /**
      * Tests to see if nested routing to a field like GridField is working
      */
-    public function testGridFieldRouting() {
+    public function testGridFieldRouting()
+    {
         $this->logInWithPermission('ADMIN');
         
         $page=$this->objFromFixture('AdvancedWidgetEditorTest_FakePage', 'testpage');
@@ -100,7 +106,8 @@ class AdvancedWidgetEditorTest extends FunctionalTest {
     /**
      * Tests to see if the widget editor is saving correctly
      */
-    public function testEditorSaving() {
+    public function testEditorSaving()
+    {
         $this->logInWithPermission('ADMIN');
         
         $page=$this->objFromFixture('AdvancedWidgetEditorTest_FakePage', 'testpage');
@@ -149,13 +156,15 @@ class AdvancedWidgetEditorTest extends FunctionalTest {
     }
 }
 
-class AdvancedWidgetEditorTest_FakePage extends Page implements TestOnly {
+class AdvancedWidgetEditorTest_FakePage extends Page implements TestOnly
+{
     private static $has_one=array(
                                 'SideBar'=>'WidgetArea'
                             );
 }
 
-class AdvancedWidgetEditorTest_TestWidget extends Widget implements TestOnly {
+class AdvancedWidgetEditorTest_TestWidget extends Widget implements TestOnly
+{
     private static $db=array(
                             'Title'=>'Varchar',
                             'SampleBoolean'=>'Boolean'
@@ -175,7 +184,8 @@ class AdvancedWidgetEditorTest_TestWidget extends Widget implements TestOnly {
      * Gets fields used in the cms
      * @return {FieldList} Fields to be used
      */
-    public function getCMSFields() {
+    public function getCMSFields()
+    {
         return new FieldList(
                             new TextField('Title', 'Title'),
                             new TreeDropdownField('TestLinkID', 'Test Link', 'SiteTree'),
@@ -185,12 +195,14 @@ class AdvancedWidgetEditorTest_TestWidget extends Widget implements TestOnly {
                         );
     }
     
-	public function Title() {
-		return $this->Title;
-	}
+    public function Title()
+    {
+        return $this->Title;
+    }
 }
 
-class AdvancedWidgetEditorTest_TestObject extends DataObject implements TestOnly {
+class AdvancedWidgetEditorTest_TestObject extends DataObject implements TestOnly
+{
     private static $db=array(
                             'Title'=>'Varchar'
                         );
@@ -200,10 +212,12 @@ class AdvancedWidgetEditorTest_TestObject extends DataObject implements TestOnly
                             );
 }
 
-class AdvancedWidgetEditor_TestController extends Controller implements TestOnly {
+class AdvancedWidgetEditor_TestController extends Controller implements TestOnly
+{
     private static $allowed_actions=array('TestForm');
     
-    public function TestForm() {
+    public function TestForm()
+    {
         $page=AdvancedWidgetEditorTest_FakePage::get()->first();
         
         $form=new Form($this, 'TestForm', new FieldList(new AdvancedWidgetAreaEditor('SideBar')), new FieldList(new FormAction('doSave', 'Save')));
@@ -213,7 +227,8 @@ class AdvancedWidgetEditor_TestController extends Controller implements TestOnly
         return $form;
     }
     
-    public function doSave($data, Form $form) {
+    public function doSave($data, Form $form)
+    {
         $page=AdvancedWidgetEditorTest_FakePage::get()->first();
         $form->saveInto($page);
         $page->write();
@@ -221,4 +236,3 @@ class AdvancedWidgetEditor_TestController extends Controller implements TestOnly
         return 'HELO';
     }
 }
-?>

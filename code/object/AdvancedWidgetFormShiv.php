@@ -1,5 +1,6 @@
 <?php
-class AdvancedWidgetFormShiv extends Form {
+class AdvancedWidgetFormShiv extends Form
+{
     /**
      * @var AdvancedWidgetAreaEditor
      */
@@ -17,7 +18,8 @@ class AdvancedWidgetFormShiv extends Form {
      * @param {AdvancedWidgetAreaEditor} $widgetEditor Widget editor to be bound to
      * @param {Widget} $widget Source widget
      */
-    public function __construct(AdvancedWidgetAreaEditor $widgetEditor, Widget $widget) {
+    public function __construct(AdvancedWidgetAreaEditor $widgetEditor, Widget $widget)
+    {
         $this->_widgetEditor=$widgetEditor;
         $this->_widget=$widget;
     }
@@ -26,7 +28,8 @@ class AdvancedWidgetFormShiv extends Form {
      * Wrapper for getting the form name
      * @return {string} Name of the form or boolean false
      */
-    public function FormName() {
+    public function FormName()
+    {
         return ($this->_widgetEditor->getForm() ? $this->_widgetEditor->getForm()->FormName():false);
     }
     
@@ -34,7 +37,8 @@ class AdvancedWidgetFormShiv extends Form {
      * Gets the current record
      * @return {Widget} Current widget
      */
-    public function getRecord() {
+    public function getRecord()
+    {
         return $this->_widget;
     }
     
@@ -42,7 +46,8 @@ class AdvancedWidgetFormShiv extends Form {
      * Wrapper for getting the form's controller
      * @return {Controller} Form's controller or boolean false
      */
-    public function Controller() {
+    public function Controller()
+    {
         return ($this->_widgetEditor->getForm() ? $this->_widgetEditor->getForm()->Controller():false);
     }
     
@@ -50,15 +55,17 @@ class AdvancedWidgetFormShiv extends Form {
      * Wrapper for getting the form's controller
      * @return {Controller} Form's controller or boolean false
      */
-	public function getController() {
-		return $this->Controller();
-	}
+    public function getController()
+    {
+        return $this->Controller();
+    }
     
     /**
      * Gets the link to the widget editor plus the widgets class name
      * @return {string} Link to the widget editor plus the widgets class name
      */
-    public function FormAction() {
+    public function FormAction()
+    {
         return Controller::join_links($this->_widgetEditor->Link('field'), $this->_widget->ClassName, '');
     }
     
@@ -66,7 +73,8 @@ class AdvancedWidgetFormShiv extends Form {
      * Wrapper for getting the form's security token
      * @return {SecurityToken} Form's security token or null
      */
-    public function getSecurityToken() {
+    public function getSecurityToken()
+    {
         return ($this->_widgetEditor->getForm() ? $this->_widgetEditor->getForm()->getSecurityToken():null);
     }
     
@@ -74,7 +82,8 @@ class AdvancedWidgetFormShiv extends Form {
      * Gets the name of the form
      * @return {string} Name of the form
      */
-    public function getName() {
+    public function getName()
+    {
         return ($this->_widgetEditor->getForm() ? $this->_widgetEditor->getForm()->getName():null);
     }
     
@@ -82,8 +91,8 @@ class AdvancedWidgetFormShiv extends Form {
      * Gets the form containing the widget editor
      * @return {Form} Raw form to retrieve
      */
-    public function getForm() {
+    public function getForm()
+    {
         return $this;
     }
 }
-?>
