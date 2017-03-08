@@ -5,7 +5,7 @@ Advanced Widget Editor
 Replaces the Widget Editor to enable support for advanced form fields such as UploadField
 
 ## Requirements
-* SilverStripe 3.1.x
+* SilverStripe 3.1+
 * [SilverStripe Widgets](https://github.com/silverstripe/silverstripe-widgets/)
 
 ## Installation
