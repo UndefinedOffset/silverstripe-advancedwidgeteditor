@@ -26,8 +26,13 @@ AdvancedWidgetEditorTest_FakePage:
         MenuTitle: "AWET Fake Page"
         SideBar: =>WidgetArea.area1
 
+Folder:
+    folder1:
+        Name: "UploadFieldTest"
+
 Image:
     awesample:
         Name: 'awe-sample.jpg'
         Title: 'awe sample'
-        Filename: 'assets/awe-sample.jpg'
+        Filename: 'assets/UploadFieldTest/awe-sample.jpg'
+        ParentID: =>Folder.folder1

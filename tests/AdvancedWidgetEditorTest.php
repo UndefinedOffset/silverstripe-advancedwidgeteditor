@@ -9,6 +9,18 @@ class AdvancedWidgetEditorTest extends FunctionalTest {
                                     'AdvancedWidgetEditorTest_TestObject'
                                 );
     
+    public function setUpOnce() {
+        parent::setUpOnce();
+        
+        if(!file_exists(ASSETS_PATH.'/UploadFieldTest/awe-sample.jpg')) {
+            if(!file_exists(ASSETS_PATH.'/UploadFieldTest/')) {
+                mkdir(ASSETS_PATH.'/UploadFieldTest/');
+            }
+            
+            copy(dirname(__FILE__).'/assets/awe-sample.jpg', ASSETS_PATH.'/UploadFieldTest/awe-sample.jpg');
+        }
+    }
+    
     /**
      * Tests to ensure that the field names are being correctly re-written by php
      */
