@@ -50,11 +50,12 @@
                 var usedWidgets = $('#usedWidgets-'+$(this).attr('name')).children();
                 
                 // Give the widget a unique id
-                var newID=parseInt($(this).data('maxid'))+1;
+                var newID=(parseInt($(this).data('maxid'))>0 ? parseInt($(this).data('maxid'))+1:0);
                 $(this).data('maxid', newID);
                 
                 var widgetContent=response.replace(/Widget\[(.*?)\]\[0\]/gi, "Widget[$1][new-" + (newID) + "]");
                 widgetContent=widgetContent.replace(new RegExp('Widget-' + ($(this).attr('name')) + '-0-','gi'), "Widget-" + ($(this).attr('name')) + "-new-" + (newID) + "-");
+                widgetContent=widgetContent.replace(new RegExp('Widget_' + ($(this).attr('name')) + '_0_','gi'), "Widget_" + ($(this).attr('name')) + "_new_" + (newID) + "_");
                 $('#usedWidgets-'+$(this).attr('name')).append(widgetContent);
                 
                 //If Upload Fields are present ensure the enctype is right
