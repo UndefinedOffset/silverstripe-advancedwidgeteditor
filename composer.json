@@ -20,6 +20,9 @@
     "support": {
         "issues": "https://github.com/undefinedoffset/silverstripe-advancedwidgeteditor/issues"
     },
+    "suggest": {
+        "webbuilders-group/silverstripe-collapsiblewidgets": "Extends the widget area editor and makes used widgets collapsible"
+    },
     "extra": {
         "installer-name": "advancedwidgeteditor"
     }
