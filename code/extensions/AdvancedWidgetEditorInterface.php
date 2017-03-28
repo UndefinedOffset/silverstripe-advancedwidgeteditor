@@ -55,7 +55,11 @@ class AdvancedWidgetEditorInterface extends DataExtension {
             
             //Fix the gridstate field
             if($field instanceof GridField) {
-                $field->getState(false)->setName($name.'[GridState]');
+				if($readonly){
+					$field = ReadonlyField::create($field->getTitle);
+				}else {
+					$field->getState(false)->setName($name.'[GridState]');
+				}
             }
             
             
