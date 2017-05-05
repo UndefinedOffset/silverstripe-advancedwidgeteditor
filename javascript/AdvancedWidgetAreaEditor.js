@@ -50,8 +50,8 @@
                 var usedWidgets = $('#usedWidgets-'+$(this).attr('name')).children();
                 
                 // Give the widget a unique id
-                var newID=(parseInt($(this).data('maxid'))>0 ? parseInt($(this).data('maxid'))+1:0);
-                $(this).data('maxid', newID);
+                var newID=(parseInt($(this).attr('data-maxid')) ? parseInt($(this).attr('data-maxid')):0)+1;
+                $(this).attr('data-maxid', newID);
                 
                 var widgetContent=response.replace(/Widget\[(.*?)\]\[0\]/gi, "Widget[$1][new-" + (newID) + "]");
                 widgetContent=widgetContent.replace(new RegExp('Widget-' + ($(this).attr('name')) + '-0-','gi'), "Widget-" + ($(this).attr('name')) + "-new-" + (newID) + "-");
