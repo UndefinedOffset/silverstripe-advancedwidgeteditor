@@ -1,6 +1,17 @@
 # Change Log
 
-## [0.3.4](https://github.com/UndefinedOffset/silverstripe-advancedwidgeteditor/tree/0.3.3) (2017-03-08)
+## [0.3.4](https://github.com/UndefinedOffset/silverstripe-advancedwidgeteditor/tree/0.3.4) (2017-05-05)
+[Full Changelog](https://github.com/UndefinedOffset/silverstripe-advancedwidgeteditor/compare/0.3.3...0.3.4)
+
+**Fixed bugs:**
+
+- Adding Multiple Widgets at a time causes only the last one to be kept on save [\#16](https://github.com/UndefinedOffset/silverstripe-advancedwidgeteditor/issues/16)
+
+**Merged pull requests:**
+
+- Update AdvancedWidgetEditorInterface.php [\#15](https://github.com/UndefinedOffset/silverstripe-advancedwidgeteditor/pull/15) ([rsmclaren](https://github.com/rsmclaren))
+
+## [0.3.3](https://github.com/UndefinedOffset/silverstripe-advancedwidgeteditor/tree/0.3.3) (2017-03-08)
 [Full Changelog](https://github.com/UndefinedOffset/silverstripe-advancedwidgeteditor/compare/0.3.2...0.3.3)
 
 **Merged pull requests:**
