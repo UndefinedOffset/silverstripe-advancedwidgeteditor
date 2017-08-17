@@ -14,7 +14,7 @@ class AdvancedWidgetPageExtension extends WidgetPageExtension {
     
 	/**
 	 * Updates the fields used in the cms
-	 * @param {FieldList} $fields Fields to be extended
+	 * @param FieldList $fields Fields to be extended
 	 */
 	public function updateCMSFields(FieldList $fields) {
         $fields->addFieldToTab('Root.Widgets', new CheckboxField('InheritSideBar', _t('AdvancedWidgetPageExtension.INHERIT_SIDEBAR', 'Inherit Sidebar From Parent')));

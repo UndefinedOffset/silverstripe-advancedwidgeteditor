@@ -29,12 +29,42 @@ class AdvancedWidgetEditorInterface extends DataExtension {
     /**
      * Gets the fields to be used in the form
      * @param {bool} $readonly Boolean true if the fields should be rendered as readonly
-     * @return {FieldList} Fields to be used in the form
+     * @return FieldList Fields to be used in the form
      */
     public function AdvancedCMSEditor($readonly=false) {
         $fields=$this->owner->getCMSFields();
-        $outputFields=new FieldList();
         
+        
+        $this->renameFields($fields);
+        
+        
+        //If readonly make the whole fieldlist readonly
+        if($readonly) {
+            $fields=$fields->makeReadonly();
+        }
+        
+        return $fields;
+    }
+    
+    /**
+     * Renames the fields for use in the editor
+     * @param FieldList|CompositeField $fields Field list or CompositeField
+     * @param int $depth Recurrsion protection
+     */
+    final protected function renameFields($fields, $depth=0) {
+        //Recursion protection
+        if($depth>10) {
+            user_error('Too much recurssion', E_USER_ERROR);
+        }
+        
+        
+        //Verify we're looking at a FieldList or CompositeField
+        if(!($fields instanceof FieldList) && !($fields instanceof CompositeField)) {
+            user_error('Argument 1 passed to AdvancedWidgetEditorInterface::renameFields() must be an instance of FieldList or CompositeField', E_USER_ERROR);
+        }
+        
+        
+        //Loop through each field and rename
         foreach($fields as $field) {
             $field->setForm(new AdvancedWidgetFormShiv($this->_widgetEditor, $this->owner));
             
@@ -49,30 +79,32 @@ class AdvancedWidgetEditorInterface extends DataExtension {
             }
             
             
-            $name=preg_replace("/([A-Za-z0-9\-_]+)/", "Widget[".$this->_widgetEditor->getName()."][".$this->owner->ID."][\\1]", $name);
+            $name=preg_replace("/([A-Za-z0-9\-_]+)/", 'Widget['.$this->_widgetEditor->getName().']['.$this->owner->ID.'][$1]', $name);
             $field->setName($name);
             
             
             //Fix the gridstate field
             if($field instanceof GridField) {
-				if($readonly){
-					$field = ReadonlyField::create($field->getTitle);
-				}else {
-					$field->getState(false)->setName($name.'[GridState]');
-				}
+                if($readonly) {
+                    $field=ReadonlyField::create($name.'[GridState]', $field->getTitle());
+                }else {
+                    $field->getState(false)->setName($name.'[GridState]');
+                }
             }
             
             
-            $outputFields->push($field);
+            //Fix display_logic
+            if($field->hasMethod('getDisplayLogicCriteria') && $field->getDisplayLogicCriteria() && $field->getDisplayLogicCriteria()->hasMethod('prefixMasters')) {
+                $field->getDisplayLogicCriteria()->prefixMasters('Widget['.$this->_widgetEditor->getName().']['.$this->owner->ID.']');
+            }
+            
+            
+            //If we're looking at a FieldList or Composite Field recurrse down into it
+            if($field instanceof CompositeField) {
+                $depth++;
+                $this->renameFields($field->FieldList(), $depth);
+            }
         }
-        
-        
-        //If readonly make the whole fieldlist readonly
-        if($readonly) {
-            $outputFields=$outputFields->makeReadonly();
-        }
-        
-        return $outputFields;
     }
 }
 ?>

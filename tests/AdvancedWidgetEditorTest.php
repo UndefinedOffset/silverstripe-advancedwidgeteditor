@@ -185,7 +185,7 @@ class AdvancedWidgetEditorTest_TestWidget extends Widget implements TestOnly {
     
     /**
      * Gets fields used in the cms
-     * @return {FieldList} Fields to be used
+     * @return FieldList Fields to be used
      */
     public function getCMSFields() {
         return new FieldList(
