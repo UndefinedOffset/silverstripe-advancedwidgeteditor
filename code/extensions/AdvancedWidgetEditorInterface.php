@@ -12,7 +12,7 @@ class AdvancedWidgetEditorInterface extends DataExtension {
     
     /**
      * Wrapper for generating the display of the widget
-     * @param {bool} $readonly Boolean true if the fields should be rendered as readonly
+     * @param bool $readonly Boolean true if the fields should be rendered as readonly
      * @return {string} HTML to be used as the display
      */
     public function AdvancedEditableSegment($readonly=false) {
@@ -28,14 +28,14 @@ class AdvancedWidgetEditorInterface extends DataExtension {
     
     /**
      * Gets the fields to be used in the form
-     * @param {bool} $readonly Boolean true if the fields should be rendered as readonly
+     * @param bool $readonly Boolean true if the fields should be rendered as readonly
      * @return FieldList Fields to be used in the form
      */
     public function AdvancedCMSEditor($readonly=false) {
         $fields=$this->owner->getCMSFields();
         
         
-        $this->renameFields($fields);
+        $this->renameFields($fields, $readonly);
         
         
         //If readonly make the whole fieldlist readonly
@@ -49,9 +49,10 @@ class AdvancedWidgetEditorInterface extends DataExtension {
     /**
      * Renames the fields for use in the editor
      * @param FieldList|CompositeField $fields Field list or CompositeField
+     * @param bool $readonly Boolean true if the fields should be rendered as readonly
      * @param int $depth Recurrsion protection
      */
-    final protected function renameFields($fields, $depth=0) {
+    final protected function renameFields($fields, $readonly, $depth=0) {
         //Recursion protection
         if($depth>10) {
             user_error('Too much recurssion', E_USER_ERROR);
@@ -102,7 +103,7 @@ class AdvancedWidgetEditorInterface extends DataExtension {
             //If we're looking at a FieldList or Composite Field recurrse down into it
             if($field instanceof CompositeField) {
                 $depth++;
-                $this->renameFields($field->FieldList(), $depth);
+                $this->renameFields($field->FieldList(), $readonly, $depth);
             }
         }
     }
