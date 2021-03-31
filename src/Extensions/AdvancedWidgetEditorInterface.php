@@ -83,6 +83,7 @@ class AdvancedWidgetEditorInterface extends DataExtension
 
 
         //Loop through each field and rename
+        $schema = $this->owner->getSchema();
         foreach ($fields as $field) {
             $field->setForm(new AdvancedWidgetFormShiv($this->_widgetEditor, $this->owner));
 
@@ -92,7 +93,7 @@ class AdvancedWidgetEditorInterface extends DataExtension
             }
 
             //Workaround for UploadField fixes an issue detecting if the relationship is a has_one relationship
-            if ($field instanceof UploadField && $this->owner->has_one($name)) {
+            if ($field instanceof UploadField && $schema->hasOneComponent(get_class($this->owner), $name)) {
                 $field->setAllowedMaxFileNumber(1);
             }
 

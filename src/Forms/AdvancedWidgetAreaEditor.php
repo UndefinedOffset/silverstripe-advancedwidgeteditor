@@ -5,7 +5,6 @@ use SilverStripe\AssetAdmin\Forms\UploadField;
 use SilverStripe\Control\Controller;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Core\ClassInfo;
-use SilverStripe\Core\Config\Config;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\Form;
 use SilverStripe\Forms\GridField\GridField;
@@ -14,7 +13,7 @@ use SilverStripe\ORM\ArrayList;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\DataObjectInterface;
 use SilverStripe\ORM\HasManyList;
-use SilverStripe\Security\Member;
+use SilverStripe\Security\Security;
 use SilverStripe\View\Requirements;
 use SilverStripe\Widgets\Forms\WidgetAreaEditor;
 use SilverStripe\Widgets\Model\Widget;
@@ -39,23 +38,23 @@ class AdvancedWidgetAreaEditor extends WidgetAreaEditor
      */
     public function FieldHolder($properties = [])
     {
-        Requirements::css('widgets/css/WidgetAreaEditor.css');
+        Requirements::css('silverstripe/widgets: css/WidgetAreaEditor.css');
 
         if ($this->isReadonly() || $this->isDisabled()) {
             Requirements::css('undefinedoffset/silverstripe-advancedwidgeteditor: css/AdvancedWidgetAreaEditor_readonly.css');
 
-            return $this->renderWith($this->getViewerTemplates('_readonly'));
+            return $this->renderWith(AdvancedWidgetAreaEditor::class . '_readonly');
         }
 
 
         Requirements::javascript('silverstripe/widgets: javascript/WidgetAreaEditor.js');
         Requirements::javascript('undefinedoffset/silverstripe-advancedwidgeteditor: javascript/AdvancedWidgetAreaEditor.js');
 
-        return $this->renderWith($this->getViewerTemplates());
+        return $this->renderWith(AdvancedWidgetAreaEditor::class);
     }
 
     /**
-     *
+     * Gets the available widgets
      * @return ArrayList
      */
     public function AvailableWidgets()
@@ -64,13 +63,7 @@ class AdvancedWidgetAreaEditor extends WidgetAreaEditor
 
         foreach ($this->widgetClasses as $widgetClass) {
             $classes = ClassInfo::subclassesFor($widgetClass);
-
-            if (isset($classes[Widget::class])) {
-                unset($classes[Widget::class]);
-            } else if (isset($classes[0]) && $classes[0] == Widget::class) {
-                unset($classes[0]);
-            }
-
+            unset($classes[Widget::class]);
 
             $record = $this->form->getRecord();
             $availableWidgets = null;
@@ -86,13 +79,13 @@ class AdvancedWidgetAreaEditor extends WidgetAreaEditor
                     continue;
                 }
 
-                $available = Config::inst()->get($class, 'only_available_in');
+                $available = $class::config()->only_available_in;
                 if (!empty($available) && is_array($available)) {
                     if (in_array($this->Name, $available)) {
-                        $widgets->push(singleton($class));
+                        $widgets->push($class::singleton());
                     }
                 } else {
-                    $widgets->push(singleton($class));
+                    $widgets->push($class::singleton());
                 }
             }
         }
@@ -101,34 +94,34 @@ class AdvancedWidgetAreaEditor extends WidgetAreaEditor
     }
 
     /**
+     * Gets the widgets used in the current area
      * @return HasManyList
      */
     public function UsedWidgets()
     {
-        // Call class_exists() to load Widget.php earlier and avoid a segfault
-        class_exists(Widget::class);
-
         $relationName = $this->name;
         $widgets = $this->form->getRecord()->getComponent($relationName)->Items();
 
         if ($widgets instanceof HasManyList) {
-            if ($this->form->getRecord()->has_one($relationName)) {
+            $schema = DataObject::getSchema();
+            $recordClass = get_class($this->form->getRecord());
+
+            if ($schema->hasOneComponent($recordClass, $relationName)) {
                 $joinField = $relationName . 'ID';
-            } else if ($this->form->getRecord()->belongs_to($relationName)) {
+            } else if ($schema->belongsToComponent($recordClass, $relationName)) {
                 $joinField = $this->form->getRecord()->getRemoteJoinField($relationName, 'belongs_to');
             }
 
             $widgets = AdvancedWidgetsHasManyList::create($widgets->dataClass(), $joinField)->setDataQuery($widgets->dataQuery())->setWidgetEditor($this);
         }
 
-
         return $widgets;
     }
 
     /**
      * Handles a field request
-     * @param SS_HTTPRequest $request
-     * @return FormField
+     * @param \SilverStripe\Control\HTTPRequest $request
+     * @return mixed
      */
     public function handleField($request)
     {
@@ -202,16 +195,16 @@ class AdvancedWidgetAreaEditor extends WidgetAreaEditor
      * Uses the `WidgetEditor.ss` template and {@link Widget->editablesegment()}
      * to render a administrator-view of the widget. It is assumed that this
      * view contains form elements which are submitted and saved through
-     * {@link WidgetAreaEditor} within the CMS interface.
+     * {@link \SilverStripe\Widgets\Forms\WidgetAreaEditor} within the CMS interface.
      *
      * @return string HTML
      */
     public function handleAddWidgetEditor($request)
     {
         $className = $request->param('ClassName');
-        if (class_exists('Translatable') && Member::currentUserID()) {
+        if (class_exists('Translatable') && Security::getCurrentUser()) {
             // set current locale based on logged in user's locale
-            $locale = Member::currentUser()->Locale;
+            $locale = Security::getCurrentUser()->Locale;
             i18n::set_locale($locale);
         }
 
@@ -243,14 +236,14 @@ class AdvancedWidgetAreaEditor extends WidgetAreaEditor
             $postVars = $request->postVars();
 
             //Pull the post data for the widget
-            if (isset($postVars[Widget::class][$this->getName()][$objID])) {
-                $finalPostVars = $postVars[Widget::class][$this->getName()][$objID];
+            if (isset($postVars['Widget'][$this->getName()][$objID])) {
+                $finalPostVars = $postVars['Widget'][$this->getName()][$objID];
             } else {
                 $finalPostVars = [];
             }
 
             $finalPostVars = array_merge($finalPostVars, $postVars);
-            unset($finalPostVars[Widget::class]);
+            unset($finalPostVars['Widget']);
 
 
             //Workaround for UploadField's and GridFields confusing the request
@@ -271,22 +264,22 @@ class AdvancedWidgetAreaEditor extends WidgetAreaEditor
                 foreach ($uploadFields as $field) {
                     $formFieldName = 'Widget[' . $this->getName() . '][' . $objID . '][' . $field . ']';
                     $fieldData = [
-                                    $formFieldName => [
-                                                'name' => ['Uploads' => []],
-                                                'type' => ['Uploads' => []],
-                                                'tmp_name' => ['Uploads' => []],
-                                                'error' => ['Uploads' => []],
-                                                'size' => ['Uploads' => []]
-                                            ],
-                                ];
+                            $formFieldName => [
+                            'name' => ['Uploads' => []],
+                            'type' => ['Uploads' => []],
+                            'tmp_name' => ['Uploads' => []],
+                            'error' => ['Uploads' => []],
+                            'size' => ['Uploads' => []],
+                        ],
+                    ];
 
-                    if (isset($postVars[Widget::class]['name'][$this->getName()][$objID][$field]['Uploads'])) {
-                        for ($i = 0; $i < count($postVars[Widget::class]['name'][$this->getName()][$objID][$field]['Uploads']); $i++) {
-                            $fieldData[$formFieldName]['name']['Uploads'][] = $postVars[Widget::class]['name'][$this->getName()][$objID][$field]['Uploads'][$i];
-                            $fieldData[$formFieldName]['type']['Uploads'][] = $postVars[Widget::class]['type'][$this->getName()][$objID][$field]['Uploads'][$i];
-                            $fieldData[$formFieldName]['tmp_name']['Uploads'][] = $postVars[Widget::class]['tmp_name'][$this->getName()][$objID][$field]['Uploads'][$i];
-                            $fieldData[$formFieldName]['error']['Uploads'][] = $postVars[Widget::class]['error'][$this->getName()][$objID][$field]['Uploads'][$i];
-                            $fieldData[$formFieldName]['size']['Uploads'][] = $postVars[Widget::class]['size'][$this->getName()][$objID][$field]['Uploads'][$i];
+                    if (isset($postVars['Widget']['name'][$this->getName()][$objID][$field]['Uploads'])) {
+                        for ($i = 0; $i < count($postVars['Widget']['name'][$this->getName()][$objID][$field]['Uploads']); $i++) {
+                            $fieldData[$formFieldName]['name']['Uploads'][] = $postVars['Widget']['name'][$this->getName()][$objID][$field]['Uploads'][$i];
+                            $fieldData[$formFieldName]['type']['Uploads'][] = $postVars['Widget']['type'][$this->getName()][$objID][$field]['Uploads'][$i];
+                            $fieldData[$formFieldName]['tmp_name']['Uploads'][] = $postVars['Widget']['tmp_name'][$this->getName()][$objID][$field]['Uploads'][$i];
+                            $fieldData[$formFieldName]['error']['Uploads'][] = $postVars['Widget']['error'][$this->getName()][$objID][$field]['Uploads'][$i];
+                            $fieldData[$formFieldName]['size']['Uploads'][] = $postVars['Widget']['size'][$this->getName()][$objID][$field]['Uploads'][$i];
                         }
                     }
 
@@ -296,12 +289,12 @@ class AdvancedWidgetAreaEditor extends WidgetAreaEditor
 
 
             //Reorganize the gridfield data
-            if (count($gridFields) && isset($postVars[Widget::class][$this->getName()][$objID])) {
+            if (count($gridFields) && isset($postVars['Widget'][$this->getName()][$objID])) {
                 foreach ($gridFields as $field) {
                     $formFieldName = 'Widget[' . $this->getName() . '][' . $objID . '][' . $field . ']';
                     $fieldData = [
-                                    $formFieldName => $postVars[Widget::class][$this->getName()][$objID][$field],
-                                ];
+                        $formFieldName => $postVars['Widget'][$this->getName()][$objID][$field],
+                    ];
                 }
 
                 $finalPostVars = array_merge_recursive($finalPostVars, $fieldData);
@@ -353,7 +346,7 @@ class AdvancedWidgetAreaEditor extends WidgetAreaEditor
     }
 
     /**
-     * @param DataObjectInterface $record
+     * @param \SilverStripe\ORM\DataObject $record
      */
     public function saveInto(DataObjectInterface $record)
     {
@@ -381,16 +374,16 @@ class AdvancedWidgetAreaEditor extends WidgetAreaEditor
             }
         }
 
-        if (isset($_REQUEST[Widget::class])) {
-            foreach (array_keys($_REQUEST[Widget::class]) as $widgetAreaName) {
+        if (isset($_REQUEST['Widget'])) {
+            foreach (array_keys($_REQUEST['Widget']) as $widgetAreaName) {
                 if ($widgetAreaName !== $this->name) {
                     continue;
                 }
 
                 $widgetForm = new Form($this, 'WidgetForm', new FieldList(), new FieldList());
 
-                foreach (array_keys($_REQUEST[Widget::class][$widgetAreaName]) as $newWidgetID) {
-                    $newWidgetData = $_REQUEST[Widget::class][$widgetAreaName][$newWidgetID];
+                foreach (array_keys($_REQUEST['Widget'][$widgetAreaName]) as $newWidgetID) {
+                    $newWidgetData = $_REQUEST['Widget'][$widgetAreaName][$newWidgetID];
 
                     // Sometimes the id is "new-1" or similar, ensure this doesn't get into the query
                     if (!is_numeric($newWidgetID)) {
@@ -398,11 +391,10 @@ class AdvancedWidgetAreaEditor extends WidgetAreaEditor
                     }
 
                     // \"ParentID\" = '0' is for the new page
-                    $widget = DataObject::get_one(
-                        Widget::class,
-                        "(\"ParentID\"='{$record->$name()->ID}' OR " .
-                                                "\"ParentID\"='0') AND \"Widget\".\"ID\"='$newWidgetID'"
-                    );
+                    $widget = Widget::get()
+                        ->filter('ParentID', [$record->$name()->ID, 0])
+                        ->filter('ID', $newWidgetID)
+                        ->first();
 
                     // check if we are updating an existing widget
                     if ($widget && isset($missingWidgets[$widget->ID])) {
@@ -415,7 +407,7 @@ class AdvancedWidgetAreaEditor extends WidgetAreaEditor
                         $widget->ID = 0;
                         $widget->ParentID = $record->$name()->ID;
 
-                        if (!is_subclass_of($widget, Widget::class)) {
+                        if (!is_subclass_of($widget, 'Widget')) {
                             $widget = null;
                         }
                     }

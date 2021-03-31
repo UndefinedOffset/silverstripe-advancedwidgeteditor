@@ -14,14 +14,14 @@
     "require":
     {
         "silverstripe/recipe-core": "~4.6",
-        "silverstripe/widgets": "~2.0",
+        "silverstripe/widgets": "~2.0"
     },
     "support": {
         "issues": "https://github.com/undefinedoffset/silverstripe-advancedwidgeteditor/issues"
     },
     "suggest": {
         "webbuilders-group/silverstripe-collapsiblewidgets": "Extends the widget area editor and makes used widgets collapsible"
-    }
+    },
     "autoload": {
 		"psr-4": {
 			"UndefinedOffset\\AdvancedWidgetEditor\\": "src/"
@@ -32,5 +32,8 @@
             "javascript",
             "css"
         ],
+        "branch-alias": {
+            "dev-master": "2.0.x-dev"
+        }
     }
 }
