@@ -55,7 +55,7 @@ class AdvancedWidgetFormShiv extends Form
      */
     public function Controller()
     {
-        return ($this->_widgetEditor->getForm() ? $this->_widgetEditor->getForm()->Controller() : false);
+        return ($this->_widgetEditor->getForm() ? $this->_widgetEditor->getForm()->getController() : false);
     }
 
     /**
@@ -73,7 +73,7 @@ class AdvancedWidgetFormShiv extends Form
      */
     public function FormAction()
     {
-        return Controller::join_links($this->_widgetEditor->Link('field'), $this->_widget->ClassName, '');
+        return Controller::join_links($this->_widgetEditor->Link('field'), str_replace('\\', '_', $this->_widget->ClassName), '');
     }
 
     /**

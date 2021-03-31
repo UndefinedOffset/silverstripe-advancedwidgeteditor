@@ -123,7 +123,7 @@ class AdvancedWidgetAreaEditor extends WidgetAreaEditor
      */
     public function handleField($request)
     {
-        $className = $request->param('Type');
+        $className = str_replace('_', '\\', $request->param('Type'));
         $fieldName = rawurldecode($request->param('FieldName'));
         $realFieldName = preg_replace('/^Widget\[(.*?)\]\[(.*?)\]\[(.*?)\]$/', '$3', $fieldName);
         $baseURL = preg_replace('/\?(.*?)$/', '', $this->Link('field')); //Get the base link stripping parameters
@@ -295,15 +295,18 @@ class AdvancedWidgetAreaEditor extends WidgetAreaEditor
 
 
         $headers = $request->getHeaders();
-        $request = new HTTPRequest($_SERVER['REQUEST_METHOD'], str_replace(rtrim($baseLink, '/'), '', rtrim($request->getURL(), '/')) . '/', $request->getVars(), $finalPostVars, $request->getBody());
-        $request->match('$Action/$ID/$OtherID');
+        $url = rtrim($request->getURL(), '/');
+        $fakeRequest = new HTTPRequest($request->httpMethod(), str_replace(rtrim($baseLink, '/'), '', $url) . '/', $request->getVars(), $finalPostVars, $request->getBody());
+        $fakeRequest->match('$Action/$ID/$OtherID');
+        $fakeRequest->shift(substr_count(substr($url, 0, strpos($url, $fieldName) + strlen($fieldName) + 1), '/'));
+        $fakeRequest->setSession($request->getSession());
 
         //Merge in the headers
         foreach ($headers as $header => $value) {
-            $request->addHeader($header, $value);
+            $fakeRequest->addHeader($header, $value);
         }
 
-        return $request;
+        return $fakeRequest;
     }
 
     /**
