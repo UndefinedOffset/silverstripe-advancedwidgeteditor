@@ -1,13 +1,55 @@
 <?php
+
+namespace UndefinedOffset\AdvancedWidgetEditor\Tests;
+
+
+
+
+
+use Page;
+
+
+
+
+
+
+
+
+
+
+
+use UndefinedOffset\AdvancedWidgetEditor\Tests\AdvancedWidgetEditorTest_FakePage;
+use UndefinedOffset\AdvancedWidgetEditor\Tests\AdvancedWidgetEditorTest_TestWidget;
+use UndefinedOffset\AdvancedWidgetEditor\Tests\AdvancedWidgetEditorTest_TestObject;
+use UndefinedOffset\AdvancedWidgetEditor\Forms\AdvancedWidgetAreaEditor;
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\Form;
+use SilverStripe\Assets\Image;
+use SilverStripe\Dev\FunctionalTest;
+use SilverStripe\Widgets\Model\WidgetArea;
+use SilverStripe\Dev\TestOnly;
+use SilverStripe\CMS\Model\SiteTree;
+use SilverStripe\Forms\TextField;
+use SilverStripe\Forms\TreeDropdownField;
+use SilverStripe\Forms\GridField\GridFieldConfig_RecordEditor;
+use SilverStripe\Forms\GridField\GridField;
+use SilverStripe\AssetAdmin\Forms\UploadField;
+use SilverStripe\Forms\CheckboxField;
+use SilverStripe\Widgets\Model\Widget;
+use SilverStripe\ORM\DataObject;
+use SilverStripe\Forms\FormAction;
+use SilverStripe\Control\Controller;
+
+
 class AdvancedWidgetEditorTest extends FunctionalTest
 {
     protected static $fixture_file = 'AdvancedWidgetEditorTest.yml';
     
     
     protected $extraDataObjects = [
-                                    'AdvancedWidgetEditorTest_FakePage',
-                                    'AdvancedWidgetEditorTest_TestWidget',
-                                    'AdvancedWidgetEditorTest_TestObject'
+                                    AdvancedWidgetEditorTest_FakePage::class,
+                                    AdvancedWidgetEditorTest_TestWidget::class,
+                                    AdvancedWidgetEditorTest_TestObject::class
                                 ];
     
     public function setUpOnce()
@@ -43,7 +85,7 @@ class AdvancedWidgetEditorTest extends FunctionalTest
      */
     public function testUsedWidets()
     {
-        $page = $this->objFromFixture('AdvancedWidgetEditorTest_FakePage', 'testpage');
+        $page = $this->objFromFixture(AdvancedWidgetEditorTest_FakePage::class, 'testpage');
         
         $form = new Form($page, 'TestForm', new FieldList($editor = new AdvancedWidgetAreaEditor('SideBar')), new FieldList());
         $form->loadDataFrom($page);
@@ -57,7 +99,7 @@ class AdvancedWidgetEditorTest extends FunctionalTest
      */
     public function testAddRouting()
     {
-        $page = $this->objFromFixture('AdvancedWidgetEditorTest_FakePage', 'testpage');
+        $page = $this->objFromFixture(AdvancedWidgetEditorTest_FakePage::class, 'testpage');
         $page->publish('Stage', 'Live');
         
         $response = $this->get('AdvancedWidgetEditor_TestController/TestForm/field/SideBar/add-widget/AdvancedWidgetEditorTest_TestWidget');
@@ -71,7 +113,7 @@ class AdvancedWidgetEditorTest extends FunctionalTest
      */
     public function testNestedTreeDropdownRouting()
     {
-        $page = $this->objFromFixture('AdvancedWidgetEditorTest_FakePage', 'testpage');
+        $page = $this->objFromFixture(AdvancedWidgetEditorTest_FakePage::class, 'testpage');
         $page->publish('Stage', 'Live');
         
         $widget = $page->SideBar()->Widgets()->first();
@@ -101,7 +143,7 @@ class AdvancedWidgetEditorTest extends FunctionalTest
     {
         $this->logInWithPermission('ADMIN');
         
-        $page = $this->objFromFixture('AdvancedWidgetEditorTest_FakePage', 'testpage');
+        $page = $this->objFromFixture(AdvancedWidgetEditorTest_FakePage::class, 'testpage');
         $page->publish('Stage', 'Live');
         
         $controller = new AdvancedWidgetEditor_TestController();
@@ -123,13 +165,13 @@ class AdvancedWidgetEditorTest extends FunctionalTest
     {
         $this->logInWithPermission('ADMIN');
         
-        $page = $this->objFromFixture('AdvancedWidgetEditorTest_FakePage', 'testpage');
+        $page = $this->objFromFixture(AdvancedWidgetEditorTest_FakePage::class, 'testpage');
         $page->publish('Stage', 'Live');
         
         $controller = new AdvancedWidgetEditor_TestController();
         $widget = $controller->TestForm()->Fields()->dataFieldByName('SideBar')->UsedWidgets()->first();
         
-        $img = $this->objFromFixture('Image', 'awesample');
+        $img = $this->objFromFixture(Image::class, 'awesample');
         
         
         $response = $this->post($controller->TestForm()->FormAction(), [
@@ -159,7 +201,7 @@ class AdvancedWidgetEditorTest extends FunctionalTest
         
         
         //Verify the widget exists
-        $this->assertInstanceOf('AdvancedWidgetEditorTest_TestWidget', $widget);
+        $this->assertInstanceOf(AdvancedWidgetEditorTest_TestWidget::class, $widget);
         
         
         //Verify the fields changed
@@ -172,7 +214,7 @@ class AdvancedWidgetEditorTest extends FunctionalTest
 class AdvancedWidgetEditorTest_FakePage extends Page implements TestOnly
 {
     private static $has_one = [
-                                'SideBar' => 'WidgetArea',
+                                'SideBar' => WidgetArea::class,
                             ];
 }
 
@@ -184,12 +226,12 @@ class AdvancedWidgetEditorTest_TestWidget extends Widget implements TestOnly
                         ];
     
     private static $has_one = [
-                                'Image' => 'Image',
-                                'TestLink' => 'SiteTree',
+                                'Image' => Image::class,
+                                'TestLink' => SiteTree::class,
                             ];
     
     private static $has_many = [
-                                'TestObjects' => 'AdvancedWidgetEditorTest_TestObject',
+                                'TestObjects' => AdvancedWidgetEditorTest_TestObject::class,
                             ];
     
     
@@ -201,9 +243,9 @@ class AdvancedWidgetEditorTest_TestWidget extends Widget implements TestOnly
     {
         return new FieldList(
             new TextField('Title', 'Title'),
-            new TreeDropdownField('TestLinkID', 'Test Link', 'SiteTree'),
+            new TreeDropdownField('TestLinkID', 'Test Link', SiteTree::class),
             new GridField('TestObjects', 'Test Objects', $this->TestObjects(), GridFieldConfig_RecordEditor::create(10)),
-            new UploadField('Image', 'Image'),
+            new UploadField(Image::class, Image::class),
             new CheckboxField('SampleBoolean', 'A simple checkbox')
         );
     }
@@ -221,7 +263,7 @@ class AdvancedWidgetEditorTest_TestObject extends DataObject implements TestOnly
                         ];
     
     private static $has_one = [
-                                'Parent' => 'AdvancedWidgetEditorTest_TestWidget',
+                                'Parent' => AdvancedWidgetEditorTest_TestWidget::class,
                             ];
 }
 

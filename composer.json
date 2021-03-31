@@ -22,4 +22,15 @@
     "suggest": {
         "webbuilders-group/silverstripe-collapsiblewidgets": "Extends the widget area editor and makes used widgets collapsible"
     }
+    "autoload": {
+		"psr-4": {
+			"UndefinedOffset\\AdvancedWidgetEditor\\": "src/"
+		}
+    },
+    "extra": {
+        "expose": [
+            "javascript",
+            "css"
+        ],
+    }
 }

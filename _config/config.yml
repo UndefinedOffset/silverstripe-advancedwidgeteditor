@@ -2,6 +2,6 @@
 Name: advancedwidgeteditor
 After: 'cms/*', 'framework/*', 'widgets/*'
 ---
-Widget:
-    extensions:
-        - 'AdvancedWidgetEditorInterface'
+SilverStripe\Widgets\Model\Widget:
+  extensions:
+    - UndefinedOffset\AdvancedWidgetEditor\Extensions\AdvancedWidgetEditorInterface
