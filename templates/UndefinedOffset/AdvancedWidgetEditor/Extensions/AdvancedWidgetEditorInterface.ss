@@ -15,6 +15,6 @@
     <input type="hidden" name="$AdvancedName[Sort]" value="$Sort" />
 
     <% if not $IsEditorReadonly %>
-        <p class="deleteWidget"><span class="widgetDelete ss-ui-button"><% _t('WidgetEditor_ss.DELETE', 'Delete') %></span></p>
+        <p class="deleteWidget"><span class="widgetDelete btn btn-danger"><% _t('WidgetEditor_ss.DELETE', 'Delete') %></span></p>
     <% end_if %>
 </div>

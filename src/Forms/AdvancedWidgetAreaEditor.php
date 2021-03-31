@@ -8,12 +8,10 @@ use SilverStripe\Core\ClassInfo;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\Form;
 use SilverStripe\Forms\GridField\GridField;
-use SilverStripe\i18n\i18n;
 use SilverStripe\ORM\ArrayList;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\DataObjectInterface;
 use SilverStripe\ORM\HasManyList;
-use SilverStripe\Security\Security;
 use SilverStripe\View\Requirements;
 use SilverStripe\Widgets\Forms\WidgetAreaEditor;
 use SilverStripe\Widgets\Model\Widget;
@@ -201,13 +199,7 @@ class AdvancedWidgetAreaEditor extends WidgetAreaEditor
      */
     public function handleAddWidgetEditor($request)
     {
-        $className = $request->param('ClassName');
-        if (class_exists('Translatable') && Security::getCurrentUser()) {
-            // set current locale based on logged in user's locale
-            $locale = Security::getCurrentUser()->Locale;
-            i18n::set_locale($locale);
-        }
-
+        $className = str_replace('_', '\\', $request->param('ClassName'));
         if (class_exists($className) && is_subclass_of($className, Widget::class)) {
             $obj = new $className();
             $obj->setWidgetEditor($this);
@@ -374,16 +366,17 @@ class AdvancedWidgetAreaEditor extends WidgetAreaEditor
             }
         }
 
-        if (isset($_REQUEST['Widget'])) {
-            foreach (array_keys($_REQUEST['Widget']) as $widgetAreaName) {
+        $widgetAreasData = $this->getRequest()->requestVar('Widget');
+        if (isset($widgetAreasData)) {
+            foreach (array_keys($widgetAreasData) as $widgetAreaName) {
                 if ($widgetAreaName !== $this->name) {
                     continue;
                 }
 
                 $widgetForm = new Form($this, 'WidgetForm', new FieldList(), new FieldList());
 
-                foreach (array_keys($_REQUEST['Widget'][$widgetAreaName]) as $newWidgetID) {
-                    $newWidgetData = $_REQUEST['Widget'][$widgetAreaName][$newWidgetID];
+                foreach (array_keys($widgetAreasData[$widgetAreaName]) as $newWidgetID) {
+                    $newWidgetData = $widgetAreasData[$widgetAreaName][$newWidgetID];
 
                     // Sometimes the id is "new-1" or similar, ensure this doesn't get into the query
                     if (!is_numeric($newWidgetID)) {
