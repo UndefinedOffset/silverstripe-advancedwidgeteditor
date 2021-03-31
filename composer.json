@@ -13,17 +13,13 @@
     ],
     "require":
     {
-        "silverstripe/framework": "~3.1",
-        "silverstripe/widgets": "*",
-        "composer/installers": "*"
+        "silverstripe/recipe-core": "~4.6",
+        "silverstripe/widgets": "~2.0",
     },
     "support": {
         "issues": "https://github.com/undefinedoffset/silverstripe-advancedwidgeteditor/issues"
     },
     "suggest": {
         "webbuilders-group/silverstripe-collapsiblewidgets": "Extends the widget area editor and makes used widgets collapsible"
-    },
-    "extra": {
-        "installer-name": "advancedwidgeteditor"
     }
 }

@@ -1,5 +1,8 @@
 # Change Log
 
+## [1.0.0](https://github.com/UndefinedOffset/silverstripe-advancedwidgeteditor/tree/1.0.0) (2017-08-17)
+[Full Changelog](https://github.com/UndefinedOffset/silverstripe-advancedwidgeteditor/compare/0.4.0...1.0.0)
+
 ## [0.4.0](https://github.com/UndefinedOffset/silverstripe-advancedwidgeteditor/tree/0.4.0) (2017-08-17)
 [Full Changelog](https://github.com/UndefinedOffset/silverstripe-advancedwidgeteditor/compare/0.3.1...0.4.0)
 
