@@ -409,7 +409,6 @@ class AdvancedWidgetAreaEditor extends WidgetAreaEditor
                     //Populate the form
                     $widgetForm->loadDataFrom($newWidgetData);
 
-
                     //Save the form into the widget and write
                     $widgetForm->saveInto($widget);
                     $widget->Sort = (array_key_exists('Sort', $newWidgetData) ? $newWidgetData['Sort'] : $widget->Sort);

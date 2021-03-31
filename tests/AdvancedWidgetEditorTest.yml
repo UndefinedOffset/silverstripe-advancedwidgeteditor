@@ -1,4 +1,4 @@
-AdvancedWidgetEditorTest_TestObject:
+UndefinedOffset\AdvancedWidgetEditor\Tests\TestObjects\TestObject:
     test1:
         Title: "Object 1"
     test2:
@@ -9,30 +9,32 @@ AdvancedWidgetEditorTest_TestObject:
         Title: "Object 4"
 
 
-AdvancedWidgetEditorTest_TestWidget:
+UndefinedOffset\AdvancedWidgetEditor\Tests\TestObjects\TestWidget:
     widget1:
         Title: "Test Widget"
-        TestObjects: =>AdvancedWidgetEditorTest_TestObject.test1,=>AdvancedWidgetEditorTest_TestObject.test2,=>AdvancedWidgetEditorTest_TestObject.test3,=>AdvancedWidgetEditorTest_TestObject.test4
+        TestObjects: =>UndefinedOffset\AdvancedWidgetEditor\Tests\TestObjects\TestObject.test1,=>UndefinedOffset\AdvancedWidgetEditor\Tests\TestObjects\TestObject.test2,=>UndefinedOffset\AdvancedWidgetEditor\Tests\TestObjects\TestObject.test3,=>UndefinedOffset\AdvancedWidgetEditor\Tests\TestObjects\TestObject.test4
 
 
-WidgetArea:
+SilverStripe\Widgets\Model\WidgetArea:
     area1:
-        Widgets: =>AdvancedWidgetEditorTest_TestWidget.widget1
+        Widgets: =>UndefinedOffset\AdvancedWidgetEditor\Tests\TestObjects\TestWidget.widget1
 
 
-AdvancedWidgetEditorTest_FakePage:
+UndefinedOffset\AdvancedWidgetEditor\Tests\TestObjects\FakePage:
     testpage:
-        Title: "AWET Fake Page"
-        MenuTitle: "AWET Fake Page"
-        SideBar: =>WidgetArea.area1
+        Title: "AWE Fake Page"
+        MenuTitle: "AWE Fake Page"
+        SideBarID: =>SilverStripe\Widgets\Model\WidgetArea.area1
 
-Folder:
+
+SilverStripe\Assets\Folder:
     folder1:
         Name: "UploadFieldTest"
 
-Image:
+
+SilverStripe\Assets\Image:
     awesample:
         Name: 'awe-sample.jpg'
         Title: 'awe sample'
         Filename: 'assets/UploadFieldTest/awe-sample.jpg'
-        ParentID: =>Folder.folder1
+        ParentID: =>SilverStripe\Assets\Folder.folder1
