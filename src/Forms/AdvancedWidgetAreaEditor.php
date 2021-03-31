@@ -9,7 +9,6 @@ use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\Form;
 use SilverStripe\Forms\GridField\GridField;
 use SilverStripe\ORM\ArrayList;
-use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\DataObjectInterface;
 use SilverStripe\ORM\HasManyList;
 use SilverStripe\View\Requirements;
@@ -98,19 +97,12 @@ class AdvancedWidgetAreaEditor extends WidgetAreaEditor
     public function UsedWidgets()
     {
         $relationName = $this->name;
-        $widgets = $this->form->getRecord()->getComponent($relationName)->Items();
+        $widgets = $this->form->getRecord()->getComponent($relationName)->Widgets();
 
         if ($widgets instanceof HasManyList) {
-            $schema = DataObject::getSchema();
-            $recordClass = get_class($this->form->getRecord());
-
-            if ($schema->hasOneComponent($recordClass, $relationName)) {
-                $joinField = $relationName . 'ID';
-            } else if ($schema->belongsToComponent($recordClass, $relationName)) {
-                $joinField = $this->form->getRecord()->getRemoteJoinField($relationName, 'belongs_to');
-            }
-
-            $widgets = AdvancedWidgetsHasManyList::create($widgets->dataClass(), $joinField)->setDataQuery($widgets->dataQuery())->setWidgetEditor($this);
+            $widgets = AdvancedWidgetsHasManyList::create($widgets->dataClass(), $widgets->getForeignKey())
+                ->setDataQuery($widgets->dataQuery())
+                ->setWidgetEditor($this);
         }
 
         return $widgets;
@@ -135,8 +127,8 @@ class AdvancedWidgetAreaEditor extends WidgetAreaEditor
         if (class_exists($className) && is_subclass_of($className, Widget::class)) {
             if (is_numeric($objId)) {
                 $obj = $this->UsedWidgets()->byID(intval($objId));
-                if (empty($obj) || $obj === false || $obj->ID == 0) {
-                    return;
+                if (empty($obj) || $obj === false || !$obj->exists()) {
+                    return $this->httpError(404, 'Widget not found');
                 }
             } else {
                 $obj = singleton($className);
