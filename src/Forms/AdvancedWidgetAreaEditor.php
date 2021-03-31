@@ -60,7 +60,7 @@ class AdvancedWidgetAreaEditor extends WidgetAreaEditor
 
         foreach ($this->widgetClasses as $widgetClass) {
             $classes = ClassInfo::subclassesFor($widgetClass);
-            unset($classes[Widget::class]);
+            unset($classes[strtolower(Widget::class)]);
 
             $record = $this->form->getRecord();
             $availableWidgets = null;
@@ -361,70 +361,64 @@ class AdvancedWidgetAreaEditor extends WidgetAreaEditor
             }
         }
 
-        $widgetAreasData = $this->getRequest()->requestVar('Widget');
-        if (isset($widgetAreasData)) {
-            foreach (array_keys($widgetAreasData) as $widgetAreaName) {
-                if ($widgetAreaName !== $this->name) {
-                    continue;
+        $widgetAreasData = $this->getForm()->getController()->getRequest()->requestVar('Widget');
+        if (isset($widgetAreasData) && isset($widgetAreasData[$this->getName()])) {
+            $widgetForm = new Form($this, 'WidgetForm', new FieldList(), new FieldList());
+
+            foreach (array_keys($widgetAreasData[$this->getName()]) as $newWidgetID) {
+                $newWidgetData = $widgetAreasData[$this->getName()][$newWidgetID];
+
+                // Sometimes the id is "new-1" or similar, ensure this doesn't get into the query
+                if (!is_numeric($newWidgetID)) {
+                    $newWidgetID = 0;
                 }
 
-                $widgetForm = new Form($this, 'WidgetForm', new FieldList(), new FieldList());
+                // \"ParentID\" = '0' is for the new page
+                $widget = Widget::get()
+                    ->filter('ParentID', [$record->$name()->ID, 0])
+                    ->filter('ID', $newWidgetID)
+                    ->first();
 
-                foreach (array_keys($widgetAreasData[$widgetAreaName]) as $newWidgetID) {
-                    $newWidgetData = $widgetAreasData[$widgetAreaName][$newWidgetID];
+                // check if we are updating an existing widget
+                if ($widget && isset($missingWidgets[$widget->ID])) {
+                    unset($missingWidgets[$widget->ID]);
+                }
 
-                    // Sometimes the id is "new-1" or similar, ensure this doesn't get into the query
-                    if (!is_numeric($newWidgetID)) {
-                        $newWidgetID = 0;
+                // create a new object
+                if (!$widget && !empty($newWidgetData['Type']) && class_exists($newWidgetData['Type'])) {
+                    $widget = new $newWidgetData['Type']();
+                    $widget->ID = 0;
+                    $widget->ParentID = $record->$name()->ID;
+
+                    if (!is_subclass_of($widget, 'Widget')) {
+                        $widget = null;
                     }
+                }
 
-                    // \"ParentID\" = '0' is for the new page
-                    $widget = Widget::get()
-                        ->filter('ParentID', [$record->$name()->ID, 0])
-                        ->filter('ID', $newWidgetID)
-                        ->first();
-
-                    // check if we are updating an existing widget
-                    if ($widget && isset($missingWidgets[$widget->ID])) {
-                        unset($missingWidgets[$widget->ID]);
-                    }
-
-                    // create a new object
-                    if (!$widget && !empty($newWidgetData['Type']) && class_exists($newWidgetData['Type'])) {
-                        $widget = new $newWidgetData['Type']();
-                        $widget->ID = 0;
+                if ($widget) {
+                    if ($widget->ParentID == 0) {
                         $widget->ParentID = $record->$name()->ID;
-
-                        if (!is_subclass_of($widget, 'Widget')) {
-                            $widget = null;
-                        }
                     }
 
-                    if ($widget) {
-                        if ($widget->ParentID == 0) {
-                            $widget->ParentID = $record->$name()->ID;
-                        }
+                    //Set the widget editor
+                    $widget->setWidgetEditor($this);
 
-                        //Set the widget editor
-                        $widget->setWidgetEditor($this);
+                    //Set the form's fields
+                    $widgetForm->setFields($widget->getCMSFields());
 
-                        //Set the form's fields
-                        $widgetForm->setFields($widget->getCMSFields());
-
-                        //Populate the form
-                        $widgetForm->loadDataFrom($newWidgetData);
+                    //Populate the form
+                    $widgetForm->loadDataFrom($newWidgetData);
 
 
-                        //Save the form into the widget and write
-                        $widgetForm->saveInto($widget);
-                        $widget->Sort = (array_key_exists('Sort', $newWidgetData) ? $newWidgetData['Sort'] : $widget->Sort);
-                        $widget->write();
-                    }
+                    //Save the form into the widget and write
+                    $widgetForm->saveInto($widget);
+                    $widget->Sort = (array_key_exists('Sort', $newWidgetData) ? $newWidgetData['Sort'] : $widget->Sort);
+                    $widget->write();
                 }
             }
         }
 
-        // remove the fields not saved
+        //Remove the widgets not saved
         if ($missingWidgets) {
             foreach ($missingWidgets as $removedWidget) {
                 if (isset($removedWidget) && is_numeric($removedWidget->ID)) {
