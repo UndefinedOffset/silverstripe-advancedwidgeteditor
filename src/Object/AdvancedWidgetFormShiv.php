@@ -22,8 +22,8 @@ class AdvancedWidgetFormShiv extends Form
 
     /**
      * Constructor
-     * @param {AdvancedWidgetAreaEditor} $widgetEditor Widget editor to be bound to
-     * @param {Widget} $widget Source widget
+     * @param AdvancedWidgetAreaEditor $widgetEditor Widget editor to be bound to
+     * @param Widget $widget Source widget
      */
     public function __construct(AdvancedWidgetAreaEditor $widgetEditor, Widget $widget)
     {
@@ -33,7 +33,7 @@ class AdvancedWidgetFormShiv extends Form
 
     /**
      * Wrapper for getting the form name
-     * @return {string} Name of the form or boolean false
+     * @return string Name of the form or boolean false
      */
     public function FormName()
     {
@@ -42,7 +42,7 @@ class AdvancedWidgetFormShiv extends Form
 
     /**
      * Gets the current record
-     * @return {Widget} Current widget
+     * @return Widget Current widget
      */
     public function getRecord()
     {
@@ -51,7 +51,7 @@ class AdvancedWidgetFormShiv extends Form
 
     /**
      * Wrapper for getting the form's controller
-     * @return {Controller} Form's controller or boolean false
+     * @return Controller Form's controller or boolean false
      */
     public function Controller()
     {
@@ -60,7 +60,7 @@ class AdvancedWidgetFormShiv extends Form
 
     /**
      * Wrapper for getting the form's controller
-     * @return {Controller} Form's controller or boolean false
+     * @return Controller Form's controller or boolean false
      */
     public function getController()
     {
@@ -69,7 +69,7 @@ class AdvancedWidgetFormShiv extends Form
 
     /**
      * Gets the link to the widget editor plus the widgets class name
-     * @return {string} Link to the widget editor plus the widgets class name
+     * @return string Link to the widget editor plus the widgets class name
      */
     public function FormAction()
     {
@@ -78,7 +78,7 @@ class AdvancedWidgetFormShiv extends Form
 
     /**
      * Wrapper for getting the form's security token
-     * @return {SecurityToken} Form's security token or null
+     * @return SecurityToken Form's security token or null
      */
     public function getSecurityToken()
     {
@@ -87,7 +87,7 @@ class AdvancedWidgetFormShiv extends Form
 
     /**
      * Gets the name of the form
-     * @return {string} Name of the form
+     * @return string Name of the form
      */
     public function getName()
     {
@@ -96,7 +96,7 @@ class AdvancedWidgetFormShiv extends Form
 
     /**
      * Gets the form containing the widget editor
-     * @return {Form} Raw form to retrieve
+     * @return Form Raw form to retrieve
      */
     public function getForm()
     {

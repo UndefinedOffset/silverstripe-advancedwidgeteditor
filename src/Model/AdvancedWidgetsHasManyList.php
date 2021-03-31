@@ -8,6 +8,10 @@ class AdvancedWidgetsHasManyList extends HasManyList
 {
     private $_widgetEditor = null;
 
+    /**
+     * Sets the widget editor used in this list
+     * @param AdvancedWidgetAreaEditor $editor
+     */
     public function setWidgetEditor(AdvancedWidgetAreaEditor $editor)
     {
         $this->_widgetEditor = $editor;
@@ -16,7 +20,6 @@ class AdvancedWidgetsHasManyList extends HasManyList
 
     /**
      * Create a DataObject from the given SQL row
-     *
      * @param array $row
      * @return DataObject
      */

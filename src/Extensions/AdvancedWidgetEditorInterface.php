@@ -16,7 +16,7 @@ class AdvancedWidgetEditorInterface extends DataExtension
 
     /**
      * Sets the widget editor instance for the owner
-     * @param {AdvancedWidgetAreaEditor} $editor Editor to be used
+     * @param AdvancedWidgetAreaEditor $editor Editor to be used
      */
     public function setWidgetEditor(AdvancedWidgetAreaEditor $editor)
     {
@@ -26,7 +26,7 @@ class AdvancedWidgetEditorInterface extends DataExtension
     /**
      * Wrapper for generating the display of the widget
      * @param bool $readonly Boolean true if the fields should be rendered as readonly
-     * @return {string} HTML to be used as the display
+     * @return string HTML to be used as the display
      */
     public function AdvancedEditableSegment($readonly = false)
     {

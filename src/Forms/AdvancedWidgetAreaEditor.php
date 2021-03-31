@@ -34,24 +34,24 @@ class AdvancedWidgetAreaEditor extends WidgetAreaEditor
     ];
 
     /**
-     * @param {array} $properties
-     * @return {string} HTML
+     * @param array $properties
+     * @return string HTML
      */
     public function FieldHolder($properties = [])
     {
         Requirements::css('widgets/css/WidgetAreaEditor.css');
 
         if ($this->isReadonly() || $this->isDisabled()) {
-            Requirements::css(AWE_BASE . '/css/AdvancedWidgetAreaEditor_readonly.css');
+            Requirements::css('undefinedoffset/silverstripe-advancedwidgeteditor: css/AdvancedWidgetAreaEditor_readonly.css');
 
-            return $this->renderWith('AdvancedWidgetAreaEditor_readonly');
+            return $this->renderWith($this->getViewerTemplates('_readonly'));
         }
 
 
-        Requirements::javascript('widgets/javascript/WidgetAreaEditor.js');
-        Requirements::javascript(AWE_BASE . '/javascript/AdvancedWidgetAreaEditor.js');
+        Requirements::javascript('silverstripe/widgets: javascript/WidgetAreaEditor.js');
+        Requirements::javascript('undefinedoffset/silverstripe-advancedwidgeteditor: javascript/AdvancedWidgetAreaEditor.js');
 
-        return $this->renderWith(AdvancedWidgetAreaEditor::class);
+        return $this->renderWith($this->getViewerTemplates());
     }
 
     /**
@@ -127,8 +127,8 @@ class AdvancedWidgetAreaEditor extends WidgetAreaEditor
 
     /**
      * Handles a field request
-     * @param {SS_HTTPRequest} $request
-     * @return {FormField}
+     * @param SS_HTTPRequest $request
+     * @return FormField
      */
     public function handleField($request)
     {
@@ -227,10 +227,10 @@ class AdvancedWidgetAreaEditor extends WidgetAreaEditor
 
     /**
      * Generates a fake request for the field
-     * @param {SS_HTTPRequest} $request Source Request to base the fake request off of
-     * @param {Widget} $sourceWidget Source widget
-     * @param {string} $baseLink Base URL to be truncated off of the form
-     * @return {SS_HTTPRequest} Fake HTTP Request used to fool the form field into thinking the request was made to it directly
+     * @param SS_HTTPRequest $request Source Request to base the fake request off of
+     * @param Widget $sourceWidget Source widget
+     * @param string $baseLink Base URL to be truncated off of the form
+     * @return SS_HTTPRequest Fake HTTP Request used to fool the form field into thinking the request was made to it directly
      */
     protected function getFakeRequest(HTTPRequest $request, Widget $sourceWidget, $baseLink)
     {
@@ -323,7 +323,7 @@ class AdvancedWidgetAreaEditor extends WidgetAreaEditor
 
     /**
      * Gets the shiv form
-     * @return {AdvancedWidgetFormShiv}
+     * @return AdvancedWidgetFormShiv
      */
     public function getFormShiv(Widget $obj)
     {

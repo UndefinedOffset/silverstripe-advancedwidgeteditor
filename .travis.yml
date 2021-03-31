@@ -1,17 +1,32 @@
 language: php
 php:
- - 5.6
+  - 7.2
 
-env:
- - DB=MYSQL CORE_RELEASE=3.6
- - DB=PGSQL CORE_RELEASE=3.6
- - DB=SQLITE3 CORE_RELEASE=3.6
+os: linux
+dist: xenial
+
+jobs:
+  include:
+    - php: 7.4
+      env: DB=MYSQL CORE_RELEASE=4.7
+      services:
+        - mysql
+    - php: 7.2
+      env: DB=PGSQL CORE_RELEASE=4.6
+      services:
+        - postgresql
+    - php: 7.1
+      env: DB=MYSQL CORE_RELEASE=4.6
+      services:
+        - mysql
 
 before_script:
- - phpenv rehash
- - git clone git://github.com/silverstripe-labs/silverstripe-travis-support.git ~/travis-support
- - php ~/travis-support/travis_setup.php --source `pwd` --target ~/builds/ss
- - cd ~/builds/ss
+  - composer self-update || true
+  - composer validate
+  - composer require --no-update silverstripe/recipe-cms:"^$CORE_RELEASE" --prefer-dist
+  - composer require --no-update phpunit/phpunit:^5.7 --prefer-dist
+  - if [[ $DB == PGSQL ]]; then composer require silverstripe/postgresql:~2.0 --prefer-dist --no-update; fi
+  - composer install --prefer-dist --no-interaction --no-progress --no-suggest --optimize-autoloader --verbose
 
 script:
- - phpunit advancedwidgeteditor/tests/
+  - vendor/bin/phpunit
