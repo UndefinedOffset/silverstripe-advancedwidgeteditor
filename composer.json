@@ -1,7 +1,7 @@
 {
     "name": "undefinedoffset/silverstripe-advancedwidgeteditor",
     "description": "Replaces the Widget Editor to enable support for advanced form fields such as UploadField",
-    "type": "silverstripe-module",
+    "type": "silverstripe-vendormodule",
     "keywords": ["silverstripe", "widgets", "blog"],
     "license": "BSD-3-Clause",
     "authors": [
