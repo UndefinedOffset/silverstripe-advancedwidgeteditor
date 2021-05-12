@@ -385,14 +385,11 @@ class AdvancedWidgetAreaEditor extends WidgetAreaEditor
                 }
 
                 // create a new object
-                if (!$widget && !empty($newWidgetData['Type']) && class_exists($newWidgetData['Type'])) {
-                    $widget = new $newWidgetData['Type']();
+                $className = str_replace('_', '\\', $newWidgetData['Type']);
+                if (!$widget && !empty($className) && class_exists($className) && is_subclass_of($className, Widget::class, true)) {
+                    $widget = new $className();
                     $widget->ID = 0;
                     $widget->ParentID = $record->$name()->ID;
-
-                    if (!is_subclass_of($widget, 'Widget')) {
-                        $widget = null;
-                    }
                 }
 
                 if ($widget) {
