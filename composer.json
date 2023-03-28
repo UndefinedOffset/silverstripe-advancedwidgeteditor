@@ -27,7 +27,8 @@
     },
     "autoload": {
 		"psr-4": {
-			"UndefinedOffset\\AdvancedWidgetEditor\\": "src/"
+			"UndefinedOffset\\AdvancedWidgetEditor\\": "src/",
+			"UndefinedOffset\\AdvancedWidgetEditor\\Tests\\": "tests/"
 		}
     },
     "extra": {
