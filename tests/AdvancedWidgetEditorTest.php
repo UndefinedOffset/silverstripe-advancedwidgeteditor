@@ -54,7 +54,7 @@ class AdvancedWidgetEditorTest extends FunctionalTest
 
         $fields = $widget->AdvancedCMSEditor();
 
-        $this->assertRegExp('/^Widget\[SideBar\]\[(\d+)\]\[(.*?)\]$/', $fields->first()->getName());
+        $this->assertMatchesRegularExpression('/^Widget\[SideBar\]\[(\d+)\]\[(.*?)\]$/', $fields->first()->getName());
     }
 
     /**
