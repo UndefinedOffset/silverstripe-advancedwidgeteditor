@@ -28,7 +28,7 @@ class AdvancedWidgetEditorTest extends FunctionalTest
     protected $autoFollowRedirection = false;
     protected $depSettings = null;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -83,7 +83,7 @@ class AdvancedWidgetEditorTest extends FunctionalTest
         $response = $this->get(Controller::join_links('AWETestController/TestForm/field/SideBar/add-widget/', str_replace('\\', '_', TestWidget::class)));
 
         $this->assertEquals(200, $response->getStatusCode());
-        $this->assertContains('name="Widget[SideBar][0][Type]"', $response->getBody(), 'Response did not contain the expected widget fields');
+        $this->assertStringContainsString('name="Widget[SideBar][0][Type]"', $response->getBody(), 'Response did not contain the expected widget fields');
     }
 
     /**
@@ -103,7 +103,7 @@ class AdvancedWidgetEditorTest extends FunctionalTest
         $response = $this->get($treeDropdown->Link('tree'));
 
         $this->assertEquals(200, $response->getStatusCode());
-        $this->assertContains('<ul class="tree">', $response->getBody(), 'Response did not contain the tree');
+        $this->assertStringContainsString('<ul class="tree">', $response->getBody(), 'Response did not contain the tree');
     }
 
     /**
@@ -125,7 +125,7 @@ class AdvancedWidgetEditorTest extends FunctionalTest
 
 
         $this->assertEquals(200, $response->getStatusCode());
-        $this->assertContains('id="Form_ItemEditForm"', $response->getBody(), 'Response did not contain the item edit form');
+        $this->assertStringContainsString('id="Form_ItemEditForm"', $response->getBody(), 'Response did not contain the item edit form');
     }
 
     /**
