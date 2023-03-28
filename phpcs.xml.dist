@@ -15,21 +15,21 @@
 		<exclude name="PEAR.Functions.ValidDefaultValue.NotAtEnd" />
         <exclude name="PSR2.ControlStructures.ElseIfDeclaration" />
 	</rule>
-    
+
 	<rule ref="Squiz.Strings.ConcatenationSpacing">
 		<properties>
 			<property name="spacing" value="1" />
 			<property name="ignoreNewlines" value="true"/>
 		</properties>
 	</rule>
-    
+
     <rule ref="PEAR.ControlStructures.MultiLineCondition" />
-    
+
     <rule ref="Generic.Formatting.SpaceAfterCast" />
     <rule ref="Generic.Arrays.DisallowLongArraySyntax.Found">
         <type>warning</type>
     </rule>
-    
+
     <rule ref="Squiz.Arrays.ArrayDeclaration.NoComma" />
     <rule ref="Squiz.WhiteSpace.OperatorSpacing">
         <properties>
@@ -37,9 +37,13 @@
         </properties>
     </rule>
 
+	<rule ref="PSR12.Functions.ReturnTypeDeclaration" />
+
 	<!-- include php files only -->
 	<arg name="extensions" value="php,lib,inc,php5"/>
 
-	<file>./vendor/undefinedoffset/silverstripe-advancedwidgeteditor</file>
+	<file>./src</file>
+	<file>./tests</file>
+	<file>./_config.php</file>
 </ruleset>
 
