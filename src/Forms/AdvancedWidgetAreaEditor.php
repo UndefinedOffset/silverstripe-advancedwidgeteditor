@@ -251,7 +251,7 @@ class AdvancedWidgetAreaEditor extends WidgetAreaEditor
                 foreach ($uploadFields as $field) {
                     $formFieldName = 'Widget[' . $this->getName() . '][' . $objID . '][' . $field . ']';
                     $fieldData = [
-                            $formFieldName => [
+                        $formFieldName => [
                             'name' => ['Uploads' => []],
                             'type' => ['Uploads' => []],
                             'tmp_name' => ['Uploads' => []],
