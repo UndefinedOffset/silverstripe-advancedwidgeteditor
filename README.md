@@ -1,6 +1,6 @@
 Advanced Widget Editor
 =================
-[![Build Status](https://travis-ci.org/UndefinedOffset/silverstripe-advancedwidgeteditor.png)](https://travis-ci.org/UndefinedOffset/silverstripe-advancedwidgeteditor)
+[![CI](https://github.com/UndefinedOffset/silverstripe-advancedwidgeteditor/actions/workflows/ci.yml/badge.svg)](https://github.com/UndefinedOffset/silverstripe-advancedwidgeteditor/actions/workflows/ci.yml)
 
 Replaces the Widget Editor to enable support for advanced form fields such as `SilverStripe\AssetAdmin\Forms\UploadField`
 
