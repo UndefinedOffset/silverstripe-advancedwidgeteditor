@@ -153,6 +153,9 @@ class AdvancedWidgetAreaEditor extends WidgetAreaEditor
             //Fix the gridstate field
             if ($field instanceof GridField) {
                 $field->getState(false)->setName($field->getName() . '[GridState]');
+
+                // Shift the request once more to account for grid field requests
+                $request->shift(1);
             }
 
             return $field->handleRequest($request, $this->model);
