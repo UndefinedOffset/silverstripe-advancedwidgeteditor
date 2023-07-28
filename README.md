@@ -5,8 +5,8 @@ Advanced Widget Editor
 Replaces the Widget Editor to enable support for advanced form fields such as `SilverStripe\AssetAdmin\Forms\UploadField`
 
 ## Requirements
-* SilverStripe 4.6+
-* [SilverStripe Widgets ~2.0](https://github.com/silverstripe/silverstripe-widgets/)
+* SilverStripe ~4.6 | ~5.0
+* [SilverStripe Widgets ~2.0 | ~3.0](https://github.com/silverstripe/silverstripe-widgets/)
 
 ## Installation
 ```

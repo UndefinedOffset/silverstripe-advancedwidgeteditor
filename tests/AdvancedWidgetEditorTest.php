@@ -32,7 +32,7 @@ class AdvancedWidgetEditorTest extends FunctionalTest
     {
         parent::setUp();
 
-        Director::config()->update('alternate_base_url', '/');
+        Director::config()->alternate_base_url = '/';
 
         /** @var Image $file **/
         $file = $this->objFromFixture(Image::class, 'awesample');

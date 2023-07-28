@@ -1,40 +1,40 @@
 UndefinedOffset\AdvancedWidgetEditor\Tests\TestObjects\TestObject:
-    test1:
-        Title: "Object 1"
-    test2:
-        Title: "Object 2"
-    test3:
-        Title: "Object 3"
-    test4:
-        Title: "Object 4"
+  test1:
+    Title: "Object 1"
+  test2:
+    Title: "Object 2"
+  test3:
+    Title: "Object 3"
+  test4:
+    Title: "Object 4"
 
 
 UndefinedOffset\AdvancedWidgetEditor\Tests\TestObjects\TestWidget:
-    widget1:
-        Title: "Test Widget"
-        TestObjects: =>UndefinedOffset\AdvancedWidgetEditor\Tests\TestObjects\TestObject.test1,=>UndefinedOffset\AdvancedWidgetEditor\Tests\TestObjects\TestObject.test2,=>UndefinedOffset\AdvancedWidgetEditor\Tests\TestObjects\TestObject.test3,=>UndefinedOffset\AdvancedWidgetEditor\Tests\TestObjects\TestObject.test4
+  widget1:
+    Title: "Test Widget"
+    TestObjects: =>UndefinedOffset\AdvancedWidgetEditor\Tests\TestObjects\TestObject.test1,=>UndefinedOffset\AdvancedWidgetEditor\Tests\TestObjects\TestObject.test2,=>UndefinedOffset\AdvancedWidgetEditor\Tests\TestObjects\TestObject.test3,=>UndefinedOffset\AdvancedWidgetEditor\Tests\TestObjects\TestObject.test4
 
 
 SilverStripe\Widgets\Model\WidgetArea:
-    area1:
-        Widgets: =>UndefinedOffset\AdvancedWidgetEditor\Tests\TestObjects\TestWidget.widget1
+  area1:
+    Widgets: =>UndefinedOffset\AdvancedWidgetEditor\Tests\TestObjects\TestWidget.widget1
 
 
 UndefinedOffset\AdvancedWidgetEditor\Tests\TestObjects\FakePage:
-    testpage:
-        Title: "AWE Fake Page"
-        MenuTitle: "AWE Fake Page"
-        SideBarID: =>SilverStripe\Widgets\Model\WidgetArea.area1
+  testpage:
+    Title: "AWE Fake Page"
+    MenuTitle: "AWE Fake Page"
+    SideBarID: =>SilverStripe\Widgets\Model\WidgetArea.area1
 
 
 SilverStripe\Assets\Folder:
-    folder1:
-        Name: "UploadFieldTest"
+  folder1:
+    Name: "UploadFieldTest"
 
 
 SilverStripe\Assets\Image:
-    awesample:
-        Name: 'awe-sample.jpg'
-        Title: 'awe sample'
-        Filename: 'assets/UploadFieldTest/awe-sample.jpg'
-        ParentID: =>SilverStripe\Assets\Folder.folder1
+  awesample:
+    Name: 'awe-sample.jpg'
+    Title: 'awe sample'
+    Filename: 'assets/UploadFieldTest/awe-sample.jpg'
+    ParentID: =>SilverStripe\Assets\Folder.folder1

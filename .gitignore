@@ -1,3 +1,4 @@
 /.settings
 /.buildpath
 /.project
+/.phpunit.result.cache
