@@ -63,7 +63,7 @@ class AdvancedWidgetEditorTest extends FunctionalTest
     public function testUsedWidets()
     {
         $page = $this->objFromFixture(FakePage::class, 'testpage');
-        $page->doPublish();
+        $page->publishRecursive();
 
         $controller = new TestController();
         $editor = $controller->TestForm()->Fields()->dataFieldByName('SideBar');
@@ -78,7 +78,7 @@ class AdvancedWidgetEditorTest extends FunctionalTest
     public function testAddRouting()
     {
         $page = $this->objFromFixture(FakePage::class, 'testpage');
-        $page->doPublish();
+        $page->publishRecursive();
 
         $response = $this->get(Controller::join_links('AWETestController/TestForm/field/SideBar/add-widget/', str_replace('\\', '_', TestWidget::class)));
 
@@ -94,7 +94,7 @@ class AdvancedWidgetEditorTest extends FunctionalTest
         $this->logInWithPermission('ADMIN');
 
         $page = $this->objFromFixture(FakePage::class, 'testpage');
-        $page->doPublish();
+        $page->publishRecursive();
 
         $controller = new TestController();
         $widget = $controller->TestForm()->Fields()->dataFieldByName('SideBar')->UsedWidgets()->first();
@@ -114,7 +114,7 @@ class AdvancedWidgetEditorTest extends FunctionalTest
         $this->logInWithPermission('ADMIN');
 
         $page = $this->objFromFixture(FakePage::class, 'testpage');
-        $page->doPublish();
+        $page->publishRecursive();
 
         $controller = new TestController();
         $widget = $controller->TestForm()->Fields()->dataFieldByName('SideBar')->UsedWidgets()->first();
@@ -136,7 +136,7 @@ class AdvancedWidgetEditorTest extends FunctionalTest
         $this->logInWithPermission('ADMIN');
 
         $page = $this->objFromFixture(FakePage::class, 'testpage');
-        $page->doPublish();
+        $page->publishRecursive();
 
         $controller = new TestController();
         $widget = $controller->TestForm()->Fields()->dataFieldByName('SideBar')->UsedWidgets()->first();
