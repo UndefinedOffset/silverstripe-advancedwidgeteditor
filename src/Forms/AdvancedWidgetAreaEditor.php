@@ -4,6 +4,7 @@ namespace UndefinedOffset\AdvancedWidgetEditor\Forms;
 use SilverStripe\AssetAdmin\Forms\UploadField;
 use SilverStripe\Control\Controller;
 use SilverStripe\Control\HTTPRequest;
+use SilverStripe\Control\RequestProcessor;
 use SilverStripe\Core\ClassInfo;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\Form;
@@ -35,7 +36,8 @@ class AdvancedWidgetAreaEditor extends WidgetAreaEditor
      */
     public function FieldHolder($properties = [])
     {
-        Requirements::css('silverstripe/widgets: css/WidgetAreaEditor.css');
+        $isSilverstripe5 = !class_exists(RequestProcessor::class);
+        Requirements::css('silverstripe/widgets: ' . ($isSilverstripe5 ? 'client/dist/styles' : 'css') . '/WidgetAreaEditor.css');
 
         if ($this->isReadonly() || $this->isDisabled()) {
             Requirements::css('undefinedoffset/silverstripe-advancedwidgeteditor: css/AdvancedWidgetAreaEditor_readonly.css');
@@ -44,7 +46,7 @@ class AdvancedWidgetAreaEditor extends WidgetAreaEditor
         }
 
 
-        Requirements::javascript('silverstripe/widgets: javascript/WidgetAreaEditor.js');
+        Requirements::javascript('silverstripe/widgets: ' . ($isSilverstripe5 ? 'client/dist/js' : 'javascript') . '/WidgetAreaEditor.js');
         Requirements::javascript('undefinedoffset/silverstripe-advancedwidgeteditor: javascript/AdvancedWidgetAreaEditor.js');
 
         return $this->renderWith(AdvancedWidgetAreaEditor::class);
